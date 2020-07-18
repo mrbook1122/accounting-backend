@@ -1,0 +1,7 @@
+spring:
+  mvc:
+    servlet:
+      path: /api
+  data:
+    mongodb:
+      uri: mongodb://39.108.250.251/e-store

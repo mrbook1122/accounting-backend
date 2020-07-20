@@ -2,7 +2,12 @@ package cdut.accounting.service.impl;
 
 import cdut.accounting.model.document.BillDocument;
 import cdut.accounting.model.dto.UserBill;
+import cdut.accounting.model.entity.Tally;
+import cdut.accounting.model.entity.TallyCategory;
+import cdut.accounting.model.param.BillParam;
+import cdut.accounting.repository.TallyRepository;
 import cdut.accounting.service.TallyService;
+import cdut.accounting.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -19,6 +24,9 @@ import java.util.List;
 public class TallyServiceImpl implements TallyService {
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private TallyRepository tallyRepository;
 
     @Override
     public UserBill getUserBill(String date) {
@@ -39,10 +47,14 @@ public class TallyServiceImpl implements TallyService {
             d2 = time.getTime();
         }
 
-        AggregationOperation o1 = Aggregation.match(new Criteria().andOperator(Criteria.where("date").gte(d1).lt(d2)));
+        AggregationOperation o1 =
+                Aggregation.match(new Criteria().orOperator(Criteria.where("reism").is(false),
+                        Criteria.where("reism").is(true).and("reismStatus").is(false))
+                        .and("date").gte(d1).lt(d2));
         AggregationOperation o2 = Aggregation.group("type").sum("money").as("money");
         Aggregation aggregation = Aggregation.newAggregation(o1, o2);
-        AggregationResults<BillDocument> results = mongoTemplate.aggregate(aggregation, "tally", BillDocument.class);
+        AggregationResults<BillDocument> results = mongoTemplate
+                .aggregate(aggregation, "tally", BillDocument.class);
         List<BillDocument> documents = results.getMappedResults();
 
         UserBill bill = new UserBill();
@@ -57,5 +69,14 @@ public class TallyServiceImpl implements TallyService {
             }
         }
         return bill;
+    }
+
+    @Override
+    public void saveUserBill(BillParam billParam) {
+        String username = JwtUtils.getUsername();
+//        TallyCategory tallyCategory = new TallyCategory();
+        Tally tally = new Tally(new Date(), billParam.getType(), billParam.getLabel(), billParam.getMoney(),
+                billParam.getRemarks(), billParam.isReism(), false, username);
+        tallyRepository.save(tally);
     }
 }

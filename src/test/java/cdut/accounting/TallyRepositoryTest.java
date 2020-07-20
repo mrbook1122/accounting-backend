@@ -1,8 +1,10 @@
 package cdut.accounting;
 
+import cdut.accounting.model.dto.UserBill;
 import cdut.accounting.model.entity.Tally;
 import cdut.accounting.model.entity.TallyCategory;
 import cdut.accounting.repository.TallyRepository;
+import cdut.accounting.service.TallyService;
 import org.apache.catalina.filters.RemoteIpFilter;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
@@ -23,18 +25,24 @@ public class TallyRepositoryTest {
     private TallyRepository repository;
 
     @Autowired
+    private TallyService tallyService;
+
+    @Autowired
     private MongoTemplate template;
+
+    @Test
+    void service() {
+        String date = "2020-07-15";
+        UserBill bill = tallyService.getUserBill(date);
+        System.out.println(bill);
+    }
 
     @Test
     void insert() {
         TallyCategory category = new TallyCategory(null, "expense", "购物");
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, -2);
+        calendar.add(Calendar.DATE, -3);
 //        for (int i = 0; i < 20; i++) {
-            Random random = new Random();
-            Tally tally = new Tally(calendar.getTime(), random.nextBoolean() ? "expense" : "income", category,
-                    random.nextDouble() * 100);
-            repository.save(tally);
 //        }
     }
 

@@ -1,12 +1,12 @@
 package cdut.accounting.controller;
 
+import cdut.accounting.model.dto.CommonResult;
 import cdut.accounting.model.dto.UserBill;
+import cdut.accounting.model.param.BillParam;
 import cdut.accounting.service.TallyService;
 import cdut.accounting.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 账单控制器
@@ -18,11 +18,20 @@ public class TallyController {
     private TallyService tallyService;
 
     /**
-     * 获取用户账单
+     * 获取用户账单概览
      */
     @GetMapping("")
     public UserBill getUserBill(String date) {
         DateUtils.validateDate(date);
         return tallyService.getUserBill(date);
+    }
+
+    /**
+     * 提交账单
+     */
+    @PostMapping("")
+    public CommonResult postUserBill(@RequestBody BillParam billParam) {
+        tallyService.saveUserBill(billParam);
+        return new CommonResult(true, "操作成功");
     }
 }

@@ -1,7 +1,9 @@
 package cdut.accounting.service.impl;
 
 import cdut.accounting.model.document.BillDocument;
-import cdut.accounting.model.dto.UserBill;
+import cdut.accounting.model.dto.UserBillAnalysisDTO;
+import cdut.accounting.model.dto.UserBillDTO;
+import cdut.accounting.model.dto.UserBillListDTO;
 import cdut.accounting.model.entity.Tally;
 import cdut.accounting.model.entity.TallyCategory;
 import cdut.accounting.model.param.BillParam;
@@ -9,6 +11,8 @@ import cdut.accounting.repository.TallyRepository;
 import cdut.accounting.service.TallyService;
 import cdut.accounting.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
@@ -16,6 +20,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +34,7 @@ public class TallyServiceImpl implements TallyService {
     private TallyRepository tallyRepository;
 
     @Override
-    public UserBill getUserBill(String date) {
+    public UserBillAnalysisDTO getUserBill(String date) {
         Date d1, d2;
         Calendar time = Calendar.getInstance();
         int year = Integer.parseInt(date.substring(0, 4));
@@ -57,7 +62,7 @@ public class TallyServiceImpl implements TallyService {
                 .aggregate(aggregation, "tally", BillDocument.class);
         List<BillDocument> documents = results.getMappedResults();
 
-        UserBill bill = new UserBill();
+        UserBillAnalysisDTO bill = new UserBillAnalysisDTO();
         for (BillDocument d : documents) {
             switch (d.getId()) {
                 case "expense":
@@ -78,5 +83,18 @@ public class TallyServiceImpl implements TallyService {
         Tally tally = new Tally(new Date(), billParam.getType(), billParam.getLabel(), billParam.getMoney(),
                 billParam.getRemarks(), billParam.isReism(), false, username);
         tallyRepository.save(tally);
+    }
+
+    @Override
+    public UserBillListDTO getUserBillList(int page) {
+        Page<Tally> tallyPage = tallyRepository.findAll(PageRequest.of(page - 1, 4));
+        UserBillListDTO dto = new UserBillListDTO();
+        dto.setPageLength(tallyPage.getTotalPages());
+        List<UserBillDTO> list = new ArrayList<>();
+        for (Tally t : tallyPage.getContent()) {
+            list.add(new UserBillDTO().convertFrom(t));
+        }
+        dto.setItems(list);
+        return dto;
     }
 }

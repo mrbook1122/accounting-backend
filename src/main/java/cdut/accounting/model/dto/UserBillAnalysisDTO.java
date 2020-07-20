@@ -6,7 +6,7 @@ import lombok.Data;
  * 用户账单数据（月度账单和日度账单）
  */
 @Data
-public class UserBill {
+public class UserBillAnalysisDTO {
     /**
      * 支出
      */

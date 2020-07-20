@@ -1,5 +1,7 @@
 package cdut.accounting.model.entity;
 
+import cdut.accounting.model.dto.UserBillDTO;
+import cdut.accounting.model.dto.base.OutputConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -7,6 +7,7 @@ import cdut.accounting.model.dto.UserBillListDTO;
 import cdut.accounting.model.param.BillParam;
 import cdut.accounting.service.TallyService;
 import cdut.accounting.utils.DateUtils;
+import cdut.accounting.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +45,7 @@ public class TallyController {
      */
     @GetMapping("/list")
     public List<UserBillDTO> getUserBillList() {
-        return tallyService.getUserBillList();
+        String username = JwtUtils.getUsername();
+        return tallyService.getUserBillList(username);
     }
 }

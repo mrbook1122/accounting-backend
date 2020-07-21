@@ -38,7 +38,7 @@ public class Tally {
      */
     private String label;
     /**
-     * 账单金额
+     * 账单金额（支出和收入统一用正数表示）
      */
     private double money;
     /**

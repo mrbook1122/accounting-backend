@@ -82,7 +82,7 @@ public class TallyServiceImpl implements TallyService {
     }
 
     @Override
-    public List<UserBillDTO> getUserBillList() {
+    public List<UserBillDTO> getUserBillList(String username) {
         Date d1, d2;
         Calendar c = Calendar.getInstance();
         c.set(Calendar.HOUR_OF_DAY, 0);
@@ -91,7 +91,7 @@ public class TallyServiceImpl implements TallyService {
         d1 = c.getTime();
         c.add(Calendar.DATE, 1);
         d2 = c.getTime();
-        List<Tally> tallies = tallyRepository.findByDateBetween(d1, d2);
+        List<Tally> tallies = tallyRepository.findByDateBetweenAndUsername(d1, d2, username);
         List<UserBillDTO> list = new ArrayList<>();
         for (Tally t : tallies) {
             list.add(new UserBillDTO().convertFrom(t));

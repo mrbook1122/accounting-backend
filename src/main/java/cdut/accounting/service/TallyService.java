@@ -24,5 +24,5 @@ public interface TallyService {
      * 获取用户账单列表
      * （获取当天的账单列表）
      */
-    List<UserBillDTO> getUserBillList();
+    List<UserBillDTO> getUserBillList(String username);
 }

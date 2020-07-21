@@ -13,7 +13,7 @@ import java.util.List;
 @Document
 public class Team {
     private String id;
-    private int uId;
+    private int uid;
     /**
      * 团队名称
      */

@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
     @Id
     private String id;
-    private int uId;
+    private int uid;
     /**
      * 用户名
      */

@@ -2,12 +2,15 @@ package cdut.accounting.controller;
 
 import cdut.accounting.model.dto.CommonResult;
 import cdut.accounting.model.dto.UserBillAnalysisDTO;
+import cdut.accounting.model.dto.UserBillDTO;
 import cdut.accounting.model.dto.UserBillListDTO;
 import cdut.accounting.model.param.BillParam;
 import cdut.accounting.service.TallyService;
 import cdut.accounting.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 账单控制器
@@ -40,7 +43,7 @@ public class TallyController {
      * 获取用户账单列表
      */
     @GetMapping("/list")
-    public UserBillListDTO getUserBillList(@RequestParam(required = false, defaultValue = "1") int page) {
-        return tallyService.getUserBillList(page - 1);
+    public List<UserBillDTO> getUserBillList() {
+        return tallyService.getUserBillList();
     }
 }

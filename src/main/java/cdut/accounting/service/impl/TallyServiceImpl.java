@@ -3,16 +3,12 @@ package cdut.accounting.service.impl;
 import cdut.accounting.model.document.BillDocument;
 import cdut.accounting.model.dto.UserBillAnalysisDTO;
 import cdut.accounting.model.dto.UserBillDTO;
-import cdut.accounting.model.dto.UserBillListDTO;
 import cdut.accounting.model.entity.Tally;
-import cdut.accounting.model.entity.TallyCategory;
 import cdut.accounting.model.param.BillParam;
 import cdut.accounting.repository.TallyRepository;
 import cdut.accounting.service.TallyService;
 import cdut.accounting.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
@@ -86,15 +82,20 @@ public class TallyServiceImpl implements TallyService {
     }
 
     @Override
-    public UserBillListDTO getUserBillList(int page) {
-        Page<Tally> tallyPage = tallyRepository.findAll(PageRequest.of(page - 1, 4));
-        UserBillListDTO dto = new UserBillListDTO();
-        dto.setPageLength(tallyPage.getTotalPages());
+    public List<UserBillDTO> getUserBillList() {
+        Date d1, d2;
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        d1 = c.getTime();
+        c.add(Calendar.DATE, 1);
+        d2 = c.getTime();
+        List<Tally> tallies = tallyRepository.findByDateBetween(d1, d2);
         List<UserBillDTO> list = new ArrayList<>();
-        for (Tally t : tallyPage.getContent()) {
+        for (Tally t : tallies) {
             list.add(new UserBillDTO().convertFrom(t));
         }
-        dto.setItems(list);
-        return dto;
+        return list;
     }
 }

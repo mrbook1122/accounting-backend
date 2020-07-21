@@ -20,6 +20,7 @@ import java.util.Date;
 public class Tally {
     @Id
     private String id;
+    private int uId;
     /**
      * 记账日期
      */

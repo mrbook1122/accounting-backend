@@ -1,8 +1,11 @@
 package cdut.accounting.service;
 
 import cdut.accounting.model.dto.UserBillAnalysisDTO;
+import cdut.accounting.model.dto.UserBillDTO;
 import cdut.accounting.model.dto.UserBillListDTO;
 import cdut.accounting.model.param.BillParam;
+
+import java.util.List;
 
 public interface TallyService {
     /**
@@ -19,6 +22,7 @@ public interface TallyService {
 
     /**
      * 获取用户账单列表
+     * （获取当天的账单列表）
      */
-    UserBillListDTO getUserBillList(int page);
+    List<UserBillDTO> getUserBillList();
 }

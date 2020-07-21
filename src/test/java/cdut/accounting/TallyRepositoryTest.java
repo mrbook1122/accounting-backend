@@ -1,6 +1,5 @@
 package cdut.accounting;
 
-import cdut.accounting.model.dto.UserBill;
 import cdut.accounting.model.entity.Tally;
 import cdut.accounting.model.entity.TallyCategory;
 import cdut.accounting.repository.TallyRepository;
@@ -33,8 +32,8 @@ public class TallyRepositoryTest {
     @Test
     void service() {
         String date = "2020-07-15";
-        UserBill bill = tallyService.getUserBill(date);
-        System.out.println(bill);
+//        UserBill bill = tallyService.getUserBill(date);
+//        System.out.println(bill);
     }
 
     @Test

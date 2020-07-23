@@ -4,6 +4,7 @@ import cdut.accounting.utils.JwtUtils;
 import io.jsonwebtoken.JwtException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -35,6 +36,10 @@ public class JwtFilter extends OncePerRequestFilter {
      * @return token
      */
     private String resolveToken(HttpServletRequest httpServletRequest) {
-        return httpServletRequest.getHeader("Authentication");
+        String token = httpServletRequest.getHeader("Authorization");
+        if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
+            return token.substring(7);
+        }
+        return null;
     }
 }

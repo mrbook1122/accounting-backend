@@ -24,6 +24,7 @@ public class TeamTest {
 
     @Test
     void id() {
+
         System.out.println(idUtils.generateID());
     }
 }

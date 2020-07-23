@@ -35,6 +35,6 @@ public class JwtFilter extends OncePerRequestFilter {
      * @return token
      */
     private String resolveToken(HttpServletRequest httpServletRequest) {
-        return httpServletRequest.getHeader("Token");
+        return httpServletRequest.getHeader("Authentication");
     }
 }

@@ -20,6 +20,10 @@ public class User {
      */
     private String username;
     /**
+     * 用户邮箱
+     */
+    private String email;
+    /**
      * 密码
      */
     private String password;
@@ -27,4 +31,11 @@ public class User {
      * 头像url
      */
     private String avatar;
+
+    public User(int uid, String username, String email, String password) {
+        this.uid = uid;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
 }

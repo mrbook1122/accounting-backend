@@ -1,6 +1,6 @@
 package cdut.accounting.service.impl;
 
-import cdut.accounting.model.dto.CommonResult;
+import cdut.accounting.exception.UserExistsException;
 import cdut.accounting.model.entity.User;
 import cdut.accounting.model.param.LoginParam;
 import cdut.accounting.model.param.RegisterParam;
@@ -29,6 +29,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void register(RegisterParam param) {
+        if (userRepository.findByEmail(param.getEmail()) != null) {
+            throw new UserExistsException();
+        }
         // 解密
         String password = RSAUtils.privateDecrypt(param.getPassword());
         // 加密存储密码

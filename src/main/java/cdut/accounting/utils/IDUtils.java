@@ -25,4 +25,11 @@ public class IDUtils {
                 Counter.class, "counter");
         return c.getValue();
     }
+
+    /**
+     * 生成用户id
+     */
+    public int generateUserId() {
+        return 0;
+    }
 }

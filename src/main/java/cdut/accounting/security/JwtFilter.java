@@ -27,7 +27,6 @@ public class JwtFilter extends OncePerRequestFilter {
             } catch (JwtException e) {
             }
         }
-        httpServletResponse.setHeader("Test", "Mrbook");
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 

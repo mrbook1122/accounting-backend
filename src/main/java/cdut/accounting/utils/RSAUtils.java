@@ -19,6 +19,8 @@ public class RSAUtils {
     public static final String RSA_ALGORITHM = "RSA";
     private static String publicKeyStr;
     private static String privateKeyStr;
+    private static RSAPublicKey publicKey;
+    private static RSAPrivateKey privateKey;
 
     public static String getPublicKeyStr() {
         return publicKeyStr;
@@ -38,11 +40,11 @@ public class RSAUtils {
         //生成密匙对
         KeyPair keyPair = kpg.generateKeyPair();
         //得到公钥
-        Key publicKey = keyPair.getPublic();
-        publicKeyStr = Base64.encodeBase64URLSafeString(publicKey.getEncoded());
+        publicKey = (RSAPublicKey) keyPair.getPublic();
+        publicKeyStr = Base64.encodeBase64String(publicKey.getEncoded());
         //得到私钥
-        Key privateKey = keyPair.getPrivate();
-        privateKeyStr = Base64.encodeBase64URLSafeString(privateKey.getEncoded());
+        privateKey = (RSAPrivateKey) keyPair.getPrivate();
+        privateKeyStr = Base64.encodeBase64String(privateKey.getEncoded());
     }
 
 
@@ -107,11 +109,12 @@ public class RSAUtils {
      * @param publicKey
      * @return
      */
-    public static String publicEncrypt(String data, RSAPublicKey publicKey) {
+    public static String publicEncrypt(String data) {
         try {
             Cipher cipher = Cipher.getInstance(RSA_ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            return Base64.encodeBase64URLSafeString(rsaSplitCodec(cipher, Cipher.ENCRYPT_MODE, data.getBytes(CHARSET), publicKey.getModulus().bitLength()));
+            return Base64.encodeBase64String(rsaSplitCodec(cipher, Cipher.ENCRYPT_MODE, data.getBytes(CHARSET),
+                    publicKey.getModulus().bitLength()));
         } catch (Exception e) {
             throw new RuntimeException("加密字符串[" + data + "]时遇到异常", e);
         }

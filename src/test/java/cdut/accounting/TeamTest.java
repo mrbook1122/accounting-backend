@@ -21,7 +21,10 @@ public class TeamTest {
     @Test
     void t() {
 //        teamService.getTeamList("mrbok");
-        System.out.println(JwtUtils.generateToken("mrbook"));
+//        String token = JwtUtils.generateToken("mrbook");
+//        System.out.println(token);
+//        JwtUtils.getAuthentication(token);
+        System.out.println(System.currentTimeMillis());
     }
 
     @Test

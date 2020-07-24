@@ -22,11 +22,12 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = resolveToken(httpServletRequest);
         if (token != null) {
             try {
-                Authentication authentication = JwtUtils.getAuthentication(token);
+                Authentication authentication = JwtUtils.authAndRefreshToken(token, httpServletResponse);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (JwtException e) {
             }
         }
+        httpServletResponse.setHeader("Test", "Mrbook");
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 

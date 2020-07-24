@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,6 +28,25 @@ public class JwtUtils {
         return Jwts.builder().setSubject(name)
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 3600 * 24))
                 .signWith(key).compact();
+    }
+
+    /**
+     * 认证并刷新token
+     *
+     * @param response httpResponse,在refreshToken header中存入新的token
+     */
+    public static Authentication authAndRefreshToken(String token, HttpServletResponse response) {
+        Claims claims = Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(token).getBody();
+        // 判断token是否快要过期
+        Date exp = claims.getExpiration();
+        Date now = new Date();
+        if (exp.getTime() - now.getTime() < 1000 * 60 * 10) { // 10分钟
+            String newToken = generateToken(claims.getSubject());
+            response.setHeader("refreshToken", newToken);
+        }
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        return new UsernamePasswordAuthenticationToken(claims.getSubject(), token, authorities);
     }
 
     /**

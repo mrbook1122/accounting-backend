@@ -4,6 +4,7 @@ import cdut.accounting.model.entity.Team;
 import cdut.accounting.repository.TeamRepository;
 import cdut.accounting.service.TeamService;
 import cdut.accounting.utils.IDUtils;
+import cdut.accounting.utils.JwtUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +20,8 @@ public class TeamTest {
 
     @Test
     void t() {
-        teamService.getTeamList("mrbok");
+//        teamService.getTeamList("mrbok");
+        System.out.println(JwtUtils.generateToken("mrbook"));
     }
 
     @Test

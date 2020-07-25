@@ -25,7 +25,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username);
         if (user == null) {
-            return null;
+            throw new UsernameNotFoundException("邮箱未注册");
         }
         Set<GrantedAuthority> authorities = new HashSet<>();
         return new org.springframework.security.core.userdetails.User(username, user.getPassword(), authorities);

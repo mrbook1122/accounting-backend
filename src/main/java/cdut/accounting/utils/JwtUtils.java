@@ -66,4 +66,11 @@ public class JwtUtils {
     public static String getUsername() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
+
+    /**
+     * 从SecurityContext获取当前的用户的邮箱
+     */
+    public static String getUserEmail() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
 }

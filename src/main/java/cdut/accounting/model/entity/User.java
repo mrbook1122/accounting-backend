@@ -31,6 +31,10 @@ public class User {
      * 头像url
      */
     private String avatar;
+    /**
+     * 签名
+     */
+    private String signature;
 
     public User(int uid, String username, String email, String password) {
         this.uid = uid;

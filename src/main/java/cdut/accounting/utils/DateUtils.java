@@ -19,4 +19,32 @@ public class DateUtils {
             throw new DateFormatException();
         }
     }
+
+    /**
+     * 获取一个月的开头和结尾时间
+     *
+     * @param date 日期对象
+     */
+    public static Date[] getPeriodByMonth(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        Date start = calendar.getTime();
+        calendar.add(Calendar.MONTH, 1);
+        Date end = calendar.getTime();
+        return new Date[]{start, end};
+    }
+
+    /**
+     * 获取一天的开头和结尾时间
+     *
+     * @param date 日期对象
+     */
+    public static Date[] getPeriodByDay(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        Date start = calendar.getTime();
+        calendar.add(Calendar.DATE, 1);
+        Date end = calendar.getTime();
+        return new Date[]{start, end};
+    }
 }

@@ -6,6 +6,7 @@ import cdut.accounting.service.AnalysisService;
 import cdut.accounting.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
@@ -29,5 +30,13 @@ public class AnalysisController {
     public PieChartDTO getUserPieChart(Date date) {
         String username = JwtUtils.getUsername();
         return analysisService.getUserPieChart(date, username);
+    }
+
+    /**
+     * 团队月收柱状图数据
+     */
+    @GetMapping("/team/{id}/analysis/chart")
+    public HistogramDTO getTeamHistogram(Date date, @PathVariable int id) {
+        return analysisService.getTeamHistogram(date, id);
     }
 }

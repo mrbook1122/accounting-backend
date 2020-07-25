@@ -10,7 +10,7 @@ public class UserBillAnalysisDTO {
     /**
      * 支出
      */
-    private double expense;
+    private double expenses;
     /**
      * 收入
      */

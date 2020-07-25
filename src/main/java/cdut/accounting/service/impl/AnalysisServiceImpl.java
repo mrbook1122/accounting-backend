@@ -4,8 +4,11 @@ import cdut.accounting.model.dto.HistogramDTO;
 import cdut.accounting.model.dto.PieChartDTO;
 import cdut.accounting.model.dto.PieChartItem;
 import cdut.accounting.model.entity.Tally;
+import cdut.accounting.model.entity.TeamBill;
 import cdut.accounting.repository.TallyRepository;
+import cdut.accounting.repository.TeamBillRepository;
 import cdut.accounting.service.AnalysisService;
+import cdut.accounting.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,8 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Autowired
     private TallyRepository tallyRepository;
+    @Autowired
+    private TeamBillRepository teamBillRepository;
 
     @Override
     public HistogramDTO getUserHistogram(Date date, String username) {
@@ -34,6 +39,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         HistogramDTO result = new HistogramDTO();
         int[] income = new int[numberOfDays];
         int[] expenses = new int[numberOfDays];
+
         Calendar calendar = Calendar.getInstance();
         for (Tally t : tallies) {
             calendar.setTime(t.getDate());
@@ -94,6 +100,42 @@ public class AnalysisServiceImpl implements AnalysisService {
         result.setExpenses(expenses);
         result.setIncome(income);
         return result;
+    }
+
+    @Override
+    public HistogramDTO getTeamHistogram(Date date, int teamId) {
+        Date[] dates = DateUtils.getPeriodByMonth(date);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dates[0]);
+        int numberOfDays = calendar.getActualMaximum(Calendar.DATE);
+
+        List<TeamBill> teamBills = teamBillRepository.findByTeamIdAndDateBetween(teamId, dates[0], dates[1]);
+        int[] income = new int[numberOfDays];
+        int[] expenses = new int[numberOfDays];
+        for (TeamBill t : teamBills) {
+            calendar.setTime(t.getDate());
+            int day = calendar.get(Calendar.DATE);
+            if (t.getType().equals("income")) {
+                income[day - 1] += t.getMoney();
+            } else {
+                expenses[day - 1] -= t.getMoney();
+            }
+        }
+        HistogramDTO result = new HistogramDTO();
+        result.setIncome(income);
+        result.setExpenses(expenses);
+        return result;
+    }
+
+    @Override
+    public PieChartDTO getTeamPieChart(Date date, int teamId) {
+        Date[] dates = DateUtils.getPeriodByMonth(date);
+        List<TeamBill> teamBills = teamBillRepository.findByTeamIdAndDateBetween(teamId, dates[0], dates[1]);
+        HashMap<String, Double> expenseMap = new HashMap<>();
+        HashMap<String, Double> incomeMap = new HashMap<>();
+        double expenseAmount = 0;
+        double incomeAmount = 0;
+        return null;
     }
 
     /**

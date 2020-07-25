@@ -8,6 +8,7 @@ import cdut.accounting.model.param.BillParam;
 import cdut.accounting.repository.TallyRepository;
 import cdut.accounting.service.TallyService;
 import cdut.accounting.utils.JwtUtils;
+import cdut.accounting.utils.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -62,10 +63,10 @@ public class TallyServiceImpl implements TallyService {
         for (BillDocument d : documents) {
             switch (d.getId()) {
                 case "expense":
-                    bill.setExpense(d.getMoney());
+                    bill.setExpenses(NumberUtils.formatDouble(d.getMoney()));
                     break;
                 case "income":
-                    bill.setIncome(d.getMoney());
+                    bill.setIncome(NumberUtils.formatDouble(d.getMoney()));
                     break;
             }
         }

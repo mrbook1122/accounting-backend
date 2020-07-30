@@ -59,4 +59,13 @@ public class TeamController {
     public TeamBillAnalysisDTO getTeamBillAnalysis(@PathVariable int id, Date date) {
         return teamService.getTeamBillAnalysis(id, date);
     }
+
+    /**
+     * 删除团队成员
+     */
+    @DeleteMapping("/team/{teamId}/member/{userId}")
+    public CommonResult deleteMember(@PathVariable int teamId, @PathVariable int userId) {
+        teamService.deleteMember(teamId, userId);
+        return new CommonResult(true, "操作成功");
+    }
 }

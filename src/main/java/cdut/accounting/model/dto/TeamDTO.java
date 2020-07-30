@@ -2,6 +2,8 @@ package cdut.accounting.model.dto;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * 团队dto
  */
@@ -17,4 +19,5 @@ public class TeamDTO {
      * 团队成员数量
      */
     private int number;
+    private Date date;
 }

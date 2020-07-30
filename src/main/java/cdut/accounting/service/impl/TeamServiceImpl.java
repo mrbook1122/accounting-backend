@@ -17,6 +17,8 @@ import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,6 +46,7 @@ public class TeamServiceImpl implements TeamService {
             teamDTO.setId(t.getUid());
             teamDTO.setName(t.getName());
             teamDTO.setNumber(t.getMembers().size());
+            teamDTO.setDate(t.getDate());
             String role = null;
             for (Member m : t.getMembers()) {
                 if (m.getUsername().equals(username)) {
@@ -122,5 +125,11 @@ public class TeamServiceImpl implements TeamService {
             }
         }
         return bill;
+    }
+
+    @Override
+    public void deleteMember(int teamId, int userId) {
+        mongoTemplate.updateFirst(Query.query(Criteria.where("uid").is(teamId)),
+                new Update().pull("members", null).filterArray(Criteria.where("uid").is(userId)), Team.class);
     }
 }

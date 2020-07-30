@@ -43,4 +43,9 @@ public interface TeamService {
      * 获取团队的日度分析
      */
     TeamBillAnalysisDTO getTeamBillAnalysis(int teamId, Date date);
+
+    /**
+     * 删除团队成员
+     */
+    void deleteMember(int teamId, int userId);
 }

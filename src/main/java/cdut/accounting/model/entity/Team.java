@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,4 +23,8 @@ public class Team {
      * 成员
      */
     private List<Member> members;
+    /**
+     * 创建时间
+     */
+    private Date date;
 }

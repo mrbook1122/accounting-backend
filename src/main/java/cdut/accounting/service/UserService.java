@@ -39,4 +39,9 @@ public interface UserService {
     void updateSignature(String email, String signature);
 
     void updatePassword(String email, String password);
+
+    /**
+     * 申请加入团队
+     */
+    void joinTeam(String email, int teamId);
 }

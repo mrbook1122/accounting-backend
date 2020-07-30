@@ -2,9 +2,11 @@ package cdut.accounting.service.impl;
 
 import cdut.accounting.exception.UserExistsException;
 import cdut.accounting.model.dto.UserInfoDTO;
+import cdut.accounting.model.entity.JoinApply;
 import cdut.accounting.model.entity.User;
 import cdut.accounting.model.param.LoginParam;
 import cdut.accounting.model.param.RegisterParam;
+import cdut.accounting.repository.JoinApplyRepository;
 import cdut.accounting.repository.UserRepository;
 import cdut.accounting.service.UserService;
 import cdut.accounting.utils.IDUtils;
@@ -18,6 +20,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
@@ -28,6 +32,8 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    private JoinApplyRepository joinApplyRepository;
 
     @Override
     public void register(RegisterParam param) {
@@ -93,5 +99,13 @@ public class UserServiceImpl implements UserService {
         password = passwordEncoder.encode(password);
         user.setPassword(password);
         userRepository.save(user);
+    }
+
+    @Override
+    public void joinTeam(String email, int teamId) {
+        User user = userRepository.findByEmail(email);
+        int id = idUtils.generateID();
+        JoinApply apply = new JoinApply(id, user.getUid(), teamId, Calendar.getInstance().getTime());
+        joinApplyRepository.save(apply);
     }
 }

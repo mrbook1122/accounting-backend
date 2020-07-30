@@ -101,4 +101,14 @@ public class UserController {
         userService.updatePassword(email, param.getToPassword());
         return new CommonResult(true, "更新成功");
     }
+
+    /**
+     * 申请加入团队
+     */
+    @PutMapping("/team/{teamId}")
+    public CommonResult joinTeam(@PathVariable int teamId) {
+        String username = JwtUtils.getUsername();
+        userService.joinTeam(username, teamId);
+        return CommonResult.success();
+    }
 }

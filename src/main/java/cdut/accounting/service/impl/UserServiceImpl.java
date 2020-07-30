@@ -1,6 +1,7 @@
 package cdut.accounting.service.impl;
 
 import cdut.accounting.exception.UserExistsException;
+import cdut.accounting.model.dto.JoinApplyDTO;
 import cdut.accounting.model.dto.UserInfoDTO;
 import cdut.accounting.model.entity.JoinApply;
 import cdut.accounting.model.entity.Team;
@@ -8,6 +9,7 @@ import cdut.accounting.model.entity.User;
 import cdut.accounting.model.param.LoginParam;
 import cdut.accounting.model.param.RegisterParam;
 import cdut.accounting.repository.JoinApplyRepository;
+import cdut.accounting.repository.TeamRepository;
 import cdut.accounting.repository.UserRepository;
 import cdut.accounting.service.UserService;
 import cdut.accounting.utils.IDUtils;
@@ -25,7 +27,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -41,6 +45,8 @@ public class UserServiceImpl implements UserService {
     private JoinApplyRepository joinApplyRepository;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private TeamRepository teamRepository;
 
     @Override
     public void register(RegisterParam param) {
@@ -112,7 +118,11 @@ public class UserServiceImpl implements UserService {
     public void joinTeam(String email, int teamId) {
         User user = userRepository.findByEmail(email);
         int id = idUtils.generateID();
-        JoinApply apply = new JoinApply(id, user.getUid(), teamId, Calendar.getInstance().getTime());
+        Team team = teamRepository.findByUid(teamId);
+        JoinApply apply = new
+                JoinApply(id, user.getUid(), user.getUsername(), teamId, team.getName(),
+                Calendar.getInstance().getTime(),
+                team.getOwnerId());
         joinApplyRepository.save(apply);
     }
 
@@ -121,5 +131,16 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email);
         mongoTemplate.updateFirst(Query.query(Criteria.where("uid").is(teamId)),
                 new Update().pull("members", null).filterArray(Criteria.where("uid").is(user.getUid())), Team.class);
+    }
+
+    @Override
+    public List<JoinApplyDTO> auditList(String email) {
+        User user = userRepository.findByEmail(email);
+        List<JoinApply> applies = joinApplyRepository.findAllByOwnerId(user.getUid());
+        List<JoinApplyDTO> result = new ArrayList<>();
+        for (JoinApply j : applies) {
+            result.add(new JoinApplyDTO(j.getUid(), j.getUsername(), j.getTeamName(), j.getDate()));
+        }
+        return result;
     }
 }

@@ -30,5 +30,6 @@ public class Team {
     /**
      * 创建者
      */
+    private int ownerId;
     private String owner;
 }

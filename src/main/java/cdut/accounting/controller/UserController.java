@@ -1,9 +1,6 @@
 package cdut.accounting.controller;
 
-import cdut.accounting.model.dto.CommonResult;
-import cdut.accounting.model.dto.LoginDTO;
-import cdut.accounting.model.dto.PublicKeyDTO;
-import cdut.accounting.model.dto.UserInfoDTO;
+import cdut.accounting.model.dto.*;
 import cdut.accounting.model.param.*;
 import cdut.accounting.service.UserService;
 import cdut.accounting.utils.JwtUtils;
@@ -14,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 用户相关控制器
@@ -122,4 +120,12 @@ public class UserController {
         return CommonResult.success();
     }
 
+    /**
+     * 用户待审核列表
+     */
+    @GetMapping("/user/audit/list")
+    public List<JoinApplyDTO>  auditList() {
+        String email = JwtUtils.getUserEmail();
+        return userService.auditList(email);
+    }
 }

@@ -1,9 +1,12 @@
 package cdut.accounting.service;
 
 import cdut.accounting.model.dto.CommonResult;
+import cdut.accounting.model.dto.JoinApplyDTO;
 import cdut.accounting.model.dto.UserInfoDTO;
 import cdut.accounting.model.param.LoginParam;
 import cdut.accounting.model.param.RegisterParam;
+
+import java.util.List;
 
 /**
  * 用户service
@@ -49,4 +52,9 @@ public interface UserService {
      * 退出团队
      */
     void exitTeam(String email, int teamId);
+
+    /**
+     * 获取用户的审核列表
+     */
+    List<JoinApplyDTO> auditList(String email);
 }

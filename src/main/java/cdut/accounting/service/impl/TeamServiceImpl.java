@@ -5,9 +5,11 @@ import cdut.accounting.model.dto.*;
 import cdut.accounting.model.entity.Member;
 import cdut.accounting.model.entity.Team;
 import cdut.accounting.model.entity.TeamBill;
+import cdut.accounting.model.entity.User;
 import cdut.accounting.model.param.TeamBillParam;
 import cdut.accounting.repository.TeamBillRepository;
 import cdut.accounting.repository.TeamRepository;
+import cdut.accounting.repository.UserRepository;
 import cdut.accounting.service.TeamService;
 import cdut.accounting.utils.IDUtils;
 import org.springframework.beans.BeanUtils;
@@ -36,6 +38,8 @@ public class TeamServiceImpl implements TeamService {
     private MongoTemplate mongoTemplate;
     @Autowired
     private IDUtils idUtils;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public List<TeamDTO> getTeamList(String username) {
@@ -140,10 +144,12 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void addTeam(String owner, String teamName) {
+        User user = userRepository.findByEmail(owner);
         Team team = new Team();
         team.setUid(idUtils.generateUserId());
         team.setName(teamName);
         team.setDate(Calendar.getInstance().getTime());
+        team.setOwnerId(user.getUid());
         team.setOwner(owner);
         teamRepository.save(team);
     }

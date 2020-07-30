@@ -132,4 +132,9 @@ public class TeamServiceImpl implements TeamService {
         mongoTemplate.updateFirst(Query.query(Criteria.where("uid").is(teamId)),
                 new Update().pull("members", null).filterArray(Criteria.where("uid").is(userId)), Team.class);
     }
+
+    @Override
+    public void deleteTeam(int teamId) {
+        teamRepository.deleteByUid(teamId);
+    }
 }

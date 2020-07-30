@@ -65,7 +65,7 @@ public class UserController {
     /**
      * 修改用户名
      */
-    @PutMapping("/user/username")
+    @PatchMapping("/user/username")
     public CommonResult updateUsername(@RequestBody UpdateUsernameParam param) {
         String email = JwtUtils.getUserEmail();
         userService.updateUsername(email, param.getToName());
@@ -75,7 +75,7 @@ public class UserController {
     /**
      * 修改邮箱
      */
-    @PutMapping("/user/email")
+    @PatchMapping("/user/email")
     public CommonResult updateEmail(@RequestBody UpdateEmailParam param) {
         String email = JwtUtils.getUserEmail();
         userService.updateEmail(email, param.getToEmail());
@@ -85,7 +85,7 @@ public class UserController {
     /**
      * 修改签名
      */
-    @PutMapping("/user/signature")
+    @PatchMapping("/user/signature")
     public CommonResult updateSignature(@RequestBody UpdateSignatureParam param) {
         String email = JwtUtils.getUserEmail();
         userService.updateSignature(email, param.getToSignature());
@@ -95,7 +95,7 @@ public class UserController {
     /**
      * 修改用户密码
      */
-    @PutMapping("/user/password")
+    @PatchMapping("/user/password")
     public CommonResult updatePassword(@RequestBody UpdatePasswordParam param) {
         String email = JwtUtils.getUserEmail();
         userService.updatePassword(email, param.getToPassword());

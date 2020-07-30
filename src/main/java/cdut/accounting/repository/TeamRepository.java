@@ -8,4 +8,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TeamRepository extends CrudRepository<Team, String> {
     Team findByUid(int uid);
+
+    /**
+     * 删除团队
+     * @param id 团队id
+     */
+    void deleteByUid(int id);
 }

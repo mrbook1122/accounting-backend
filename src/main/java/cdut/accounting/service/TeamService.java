@@ -48,4 +48,9 @@ public interface TeamService {
      * 删除团队成员
      */
     void deleteMember(int teamId, int userId);
+
+    /**
+     * 删除团队
+     */
+    void deleteTeam(int teamId);
 }

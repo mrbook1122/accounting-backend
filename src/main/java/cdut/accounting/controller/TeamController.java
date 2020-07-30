@@ -68,4 +68,13 @@ public class TeamController {
         teamService.deleteMember(teamId, userId);
         return new CommonResult(true, "操作成功");
     }
+
+    /**
+     * 删除团队
+     */
+    @DeleteMapping("/team/{teamId}")
+    public CommonResult deleteTeam(@PathVariable int teamId) {
+        teamService.deleteTeam(teamId);
+        return new CommonResult(true, "操作成功");
+    }
 }

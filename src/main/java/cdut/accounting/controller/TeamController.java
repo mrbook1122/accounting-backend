@@ -94,6 +94,6 @@ public class TeamController {
      */
     @GetMapping("/team/{id}")
     public List<TeamSearchDTO> searchTeam(@PathVariable int id) {
-        return null;
+        return teamService.searchTeam(id);
     }
 }

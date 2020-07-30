@@ -17,5 +17,5 @@ public interface TeamRepository extends CrudRepository<Team, String> {
      */
     void deleteByUid(int id);
 
-    List<Team> findAllByUidIsAfter(int id);
+    List<Team> findAllByUidBetween(int from, int end);
 }

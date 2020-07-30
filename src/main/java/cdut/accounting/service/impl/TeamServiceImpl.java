@@ -147,4 +147,28 @@ public class TeamServiceImpl implements TeamService {
         team.setOwner(owner);
         teamRepository.save(team);
     }
+
+    @Override
+    public List<TeamSearchDTO> searchTeam(int id) {
+        // 将id变成8位数跟数据库中的id比较大小
+        int from = id - 1, end = id + 1;
+        int[][] m = {
+                {10, 100, 1000, 10000, 100000, 1000000, 10000000},
+                {10000000, 1000000, 100000, 10000, 1000, 100, 10},
+        };
+        for (int i = 0; i < m[0].length; i++) {
+            if (id / m[0][i] == 0) {
+                from = id * m[1][i] - 1;
+                end = (id + 1) * m[1][i] + 1;
+                break;
+            }
+        }
+        List<Team> teams = teamRepository.findAllByUidBetween(from, end);
+        List<TeamSearchDTO> result = new ArrayList<>();
+        for (Team t : teams) {
+            int count = t.getMembers() == null ? 0 : t.getMembers().size();
+            result.add(new TeamSearchDTO(t.getUid(), t.getName(), count, t.getOwner()));
+        }
+        return result;
+    }
 }

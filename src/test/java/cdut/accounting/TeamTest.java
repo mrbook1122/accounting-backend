@@ -29,8 +29,7 @@ public class TeamTest {
 
     @Test
     void id() {
-
-        System.out.println(idUtils.generateID());
+        System.out.println(teamService.searchTeam(70704040));
     }
 
     @Test

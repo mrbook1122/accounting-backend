@@ -21,4 +21,14 @@ public class TeamSearchDTO {
      * 团队创建者
      */
     private String owner;
+
+    public TeamSearchDTO() {
+    }
+
+    public TeamSearchDTO(int id, String name, int count, String owner) {
+        this.id = id;
+        this.name = name;
+        this.count = count;
+        this.owner = owner;
+    }
 }

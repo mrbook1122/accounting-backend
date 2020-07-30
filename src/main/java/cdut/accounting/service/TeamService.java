@@ -1,9 +1,6 @@
 package cdut.accounting.service;
 
-import cdut.accounting.model.dto.MemberDTO;
-import cdut.accounting.model.dto.TeamBillAnalysisDTO;
-import cdut.accounting.model.dto.TeamBillDTO;
-import cdut.accounting.model.dto.TeamDTO;
+import cdut.accounting.model.dto.*;
 import cdut.accounting.model.param.TeamBillParam;
 
 import java.util.Date;
@@ -58,4 +55,9 @@ public interface TeamService {
      * 添加团队
      */
     void addTeam(String owner, String teamName);
+
+    /**
+     * 返回最左前缀匹配id的团队列表
+     */
+    List<TeamSearchDTO> searchTeam(int id);
 }

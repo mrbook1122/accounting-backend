@@ -14,4 +14,8 @@ public class CommonResult {
         this.success = success;
         this.msg = msg;
     }
+
+    public static CommonResult success() {
+        return new CommonResult(true, "操作成功");
+    }
 }

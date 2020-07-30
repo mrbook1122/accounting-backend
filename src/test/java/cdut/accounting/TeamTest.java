@@ -32,4 +32,11 @@ public class TeamTest {
 
         System.out.println(idUtils.generateID());
     }
+
+    @Test
+    void addTeam() {
+        String owner = "Mrbook";
+        String name = "团队1";
+        teamService.addTeam(owner, name);
+    }
 }

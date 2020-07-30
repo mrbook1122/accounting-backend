@@ -1,6 +1,7 @@
 package cdut.accounting.controller;
 
 import cdut.accounting.model.dto.*;
+import cdut.accounting.model.param.AddTeamParam;
 import cdut.accounting.model.param.TeamBillParam;
 import cdut.accounting.service.TeamService;
 import cdut.accounting.utils.JwtUtils;
@@ -32,6 +33,16 @@ public class TeamController {
     @GetMapping("/team/{id}/member/list")
     public List<MemberDTO> getTeamMemberList(@PathVariable int id) {
         return teamService.getTeamMemberList(id);
+    }
+
+    /**
+     * 添加团队
+     */
+    @PostMapping("/team")
+    public CommonResult addTeam(@RequestBody AddTeamParam param) {
+        String username = JwtUtils.getUsername();
+        teamService.addTeam(username, param.getName());
+        return new CommonResult(true, "操作成功");
     }
 
     /**
@@ -76,5 +87,13 @@ public class TeamController {
     public CommonResult deleteTeam(@PathVariable int teamId) {
         teamService.deleteTeam(teamId);
         return new CommonResult(true, "操作成功");
+    }
+
+    /**
+     * 根据id返回满足最左匹配的id列表
+     */
+    @GetMapping("/team/{id}")
+    public List<TeamSearchDTO> searchTeam(@PathVariable int id) {
+        return null;
     }
 }

@@ -53,4 +53,9 @@ public interface TeamService {
      * 删除团队
      */
     void deleteTeam(int teamId);
+
+    /**
+     * 添加团队
+     */
+    void addTeam(String owner, String teamName);
 }

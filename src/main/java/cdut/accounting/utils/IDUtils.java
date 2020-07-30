@@ -32,7 +32,7 @@ public class IDUtils {
      * 生成用户id
      */
     public int generateUserId() {
-        Counter c = mongoTemplate.findAndModify(Query.query(Criteria.where("_id").is("id")), new Update().inc("value",
+        Counter c = mongoTemplate.findAndModify(Query.query(Criteria.where("_id").is("uid")), new Update().inc("value",
                 1),
                 Counter.class, "counter");
         Random random = new Random();

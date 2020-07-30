@@ -27,4 +27,8 @@ public class Team {
      * 创建时间
      */
     private Date date;
+    /**
+     * 创建者
+     */
+    private String owner;
 }

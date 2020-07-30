@@ -9,6 +9,7 @@ import cdut.accounting.model.param.TeamBillParam;
 import cdut.accounting.repository.TeamBillRepository;
 import cdut.accounting.repository.TeamRepository;
 import cdut.accounting.service.TeamService;
+import cdut.accounting.utils.IDUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -18,7 +19,6 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,12 +30,12 @@ import java.util.List;
 public class TeamServiceImpl implements TeamService {
     @Autowired
     private TeamRepository teamRepository;
-
     @Autowired
     private TeamBillRepository teamBillRepository;
-
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private IDUtils idUtils;
 
     @Override
     public List<TeamDTO> getTeamList(String username) {
@@ -136,5 +136,15 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public void deleteTeam(int teamId) {
         teamRepository.deleteByUid(teamId);
+    }
+
+    @Override
+    public void addTeam(String owner, String teamName) {
+        Team team = new Team();
+        team.setUid(idUtils.generateUserId());
+        team.setName(teamName);
+        team.setDate(Calendar.getInstance().getTime());
+        team.setOwner(owner);
+        teamRepository.save(team);
     }
 }

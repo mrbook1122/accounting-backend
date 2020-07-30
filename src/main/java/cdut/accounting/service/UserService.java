@@ -44,4 +44,9 @@ public interface UserService {
      * 申请加入团队
      */
     void joinTeam(String email, int teamId);
+
+    /**
+     * 退出团队
+     */
+    void exitTeam(String email, int teamId);
 }

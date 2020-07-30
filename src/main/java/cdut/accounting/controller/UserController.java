@@ -105,10 +105,21 @@ public class UserController {
     /**
      * 申请加入团队
      */
-    @PutMapping("/team/{teamId}")
+    @PutMapping("/user/team/{teamId}")
     public CommonResult joinTeam(@PathVariable int teamId) {
         String username = JwtUtils.getUsername();
         userService.joinTeam(username, teamId);
         return CommonResult.success();
     }
+
+    /**
+     * 退出团队
+     */
+    @DeleteMapping("/user/team/{teamId}")
+    public CommonResult exitTeam(@PathVariable int teamId) {
+        String email = JwtUtils.getUserEmail();
+        userService.exitTeam(email, teamId);
+        return CommonResult.success();
+    }
+
 }

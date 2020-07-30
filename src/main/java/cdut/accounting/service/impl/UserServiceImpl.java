@@ -3,6 +3,7 @@ package cdut.accounting.service.impl;
 import cdut.accounting.exception.UserExistsException;
 import cdut.accounting.model.dto.UserInfoDTO;
 import cdut.accounting.model.entity.JoinApply;
+import cdut.accounting.model.entity.Team;
 import cdut.accounting.model.entity.User;
 import cdut.accounting.model.param.LoginParam;
 import cdut.accounting.model.param.RegisterParam;
@@ -14,6 +15,10 @@ import cdut.accounting.utils.JwtUtils;
 import cdut.accounting.utils.RSAUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,6 +39,8 @@ public class UserServiceImpl implements UserService {
     private AuthenticationManager authenticationManager;
     @Autowired
     private JoinApplyRepository joinApplyRepository;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @Override
     public void register(RegisterParam param) {
@@ -107,5 +114,12 @@ public class UserServiceImpl implements UserService {
         int id = idUtils.generateID();
         JoinApply apply = new JoinApply(id, user.getUid(), teamId, Calendar.getInstance().getTime());
         joinApplyRepository.save(apply);
+    }
+
+    @Override
+    public void exitTeam(String email, int teamId) {
+        User user = userRepository.findByEmail(email);
+        mongoTemplate.updateFirst(Query.query(Criteria.where("uid").is(teamId)),
+                new Update().pull("members", null).filterArray(Criteria.where("uid").is(user.getUid())), Team.class);
     }
 }

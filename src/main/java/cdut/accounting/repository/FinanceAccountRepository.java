@@ -4,6 +4,8 @@ import cdut.accounting.model.entity.FinanceAccount;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface FinanceAccountRepository extends CrudRepository<FinanceAccount, String> {
     /**
@@ -19,4 +21,6 @@ public interface FinanceAccountRepository extends CrudRepository<FinanceAccount,
      * 根据账户id和用户id删除账户
      */
     void deleteByUidAndOwnerId(int uid, int ownerId);
+
+    List<FinanceAccount> findAllByOwnerId(int id);
 }

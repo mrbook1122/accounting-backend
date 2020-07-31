@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class Member {
-    private int uid;
+    private int userId;
     /**
      * 成员用户名
      */
@@ -19,7 +19,8 @@ public class Member {
      */
     private String role;
 
-    public Member(String username, String role) {
+    public Member(int userId, String username, String role) {
+        this.userId = userId;
         this.username = username;
         this.role = role;
     }

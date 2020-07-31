@@ -1,10 +1,12 @@
 package cdut.accounting.service;
 
+import cdut.accounting.model.dto.FinanceAccountDTO;
 import cdut.accounting.model.dto.JoinApplyDTO;
 import cdut.accounting.model.dto.UserInfoDTO;
 import cdut.accounting.model.param.AddFinanceAccountParam;
 import cdut.accounting.model.param.LoginParam;
 import cdut.accounting.model.param.RegisterParam;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -68,4 +70,15 @@ public interface UserService {
      * 根据用户id和账户id一起删除，防止利用接口删除其他账户
      */
     void deleteAccount(String email, int id);
+
+    List<FinanceAccountDTO> getFinanceAccountList(String email);
+
+    /**
+     * 同意用户加入团队
+     * @param id 审核条目id
+     */
+    @Transactional
+    void allowJoin(int id);
+
+    void rejectJoin(String email, int id);
 }

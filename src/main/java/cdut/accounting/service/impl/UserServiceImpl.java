@@ -2,12 +2,10 @@ package cdut.accounting.service.impl;
 
 import cdut.accounting.exception.FinanceAccountExistsException;
 import cdut.accounting.exception.UserExistsException;
+import cdut.accounting.model.dto.FinanceAccountDTO;
 import cdut.accounting.model.dto.JoinApplyDTO;
 import cdut.accounting.model.dto.UserInfoDTO;
-import cdut.accounting.model.entity.FinanceAccount;
-import cdut.accounting.model.entity.JoinApply;
-import cdut.accounting.model.entity.Team;
-import cdut.accounting.model.entity.User;
+import cdut.accounting.model.entity.*;
 import cdut.accounting.model.param.AddFinanceAccountParam;
 import cdut.accounting.model.param.LoginParam;
 import cdut.accounting.model.param.RegisterParam;
@@ -169,5 +167,36 @@ public class UserServiceImpl implements UserService {
     public void deleteAccount(String email, int id) {
         User user = userRepository.findByEmail(email);
         financeAccountRepository.deleteByUidAndOwnerId(id, user.getUid());
+    }
+
+    @Override
+    public List<FinanceAccountDTO> getFinanceAccountList(String email) {
+        User user = userRepository.findByEmail(email);
+        List<FinanceAccount> accounts = financeAccountRepository.findAllByOwnerId(user.getUid());
+        List<FinanceAccountDTO> result = new ArrayList<>();
+        for (FinanceAccount f : accounts) {
+            result.add(new FinanceAccountDTO(f.getUid(), f.getType(), f.getName(), f.getBalance()));
+        }
+        return result;
+    }
+
+    @Override
+    public void allowJoin(int id) {
+        // 1.查询审核条目
+        JoinApply apply = joinApplyRepository.findByUid(id);
+        if (apply != null) {
+            // 2.添加用户到团队中
+            Member member = new Member(apply.getUserId(), apply.getUsername(), "成员");
+            mongoTemplate.updateFirst(Query.query(Criteria.where("uid").is(apply.getTeamId())), new Update().push(
+                    "members", member), Team.class);
+            // 3.删除审核条目
+            joinApplyRepository.deleteByUid(id);
+        }
+    }
+
+    @Override
+    public void rejectJoin(String email, int id) {
+        User user = userRepository.findByEmail(email);
+        joinApplyRepository.deleteByUidAndOwnerId(id, user.getUid());
     }
 }

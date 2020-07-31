@@ -130,6 +130,15 @@ public class UserController {
     }
 
     /**
+     * 用户财产账户列表
+     */
+    @GetMapping("/user/finance/account/list")
+    public List<FinanceAccountDTO> getFinanceAccountList() {
+        String email = JwtUtils.getUserEmail();
+        return userService.getFinanceAccountList(email);
+    }
+
+    /**
      * 添加财产账户
      */
     @PostMapping("/user/finance/account")
@@ -146,6 +155,26 @@ public class UserController {
     public CommonResult deleteFinanceAccount(@PathVariable int id) {
         String email = JwtUtils.getUserEmail();
         userService.deleteAccount(email, id);
+        return CommonResult.success();
+    }
+
+    /**
+     * 同意用户加入团队
+     * <p>
+     * TODO 应该当前用户和拥有者是同一人
+     *
+     * @param id 审核条目id
+     */
+    @PatchMapping("/user/audit/{id}/allow")
+    public CommonResult allowJoin(@PathVariable int id) {
+        userService.allowJoin(id);
+        return CommonResult.success();
+    }
+
+    @PatchMapping("/user/audit/{id}/reject")
+    public CommonResult rejectJoin(@PathVariable int id) {
+        String email = JwtUtils.getUserEmail();
+        userService.rejectJoin(email, id);
         return CommonResult.success();
     }
 }

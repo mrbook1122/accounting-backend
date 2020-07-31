@@ -138,4 +138,14 @@ public class UserController {
         userService.addFinanceAccount(email, param);
         return CommonResult.success();
     }
+
+    /**
+     * 删除财产账户
+     */
+    @DeleteMapping("/user/finance/account/{id}")
+    public CommonResult deleteFinanceAccount(@PathVariable int id) {
+        String email = JwtUtils.getUserEmail();
+        userService.deleteAccount(email, id);
+        return CommonResult.success();
+    }
 }

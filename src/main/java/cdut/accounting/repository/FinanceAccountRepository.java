@@ -14,4 +14,9 @@ public interface FinanceAccountRepository extends CrudRepository<FinanceAccount,
      * @param ownerId 用户id
      */
     FinanceAccount findByTypeAndNameAndOwnerId(String type, String name, int ownerId);
+
+    /**
+     * 根据账户id和用户id删除账户
+     */
+    void deleteByUidAndOwnerId(int uid, int ownerId);
 }

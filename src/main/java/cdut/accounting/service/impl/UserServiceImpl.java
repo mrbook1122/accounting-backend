@@ -164,4 +164,10 @@ public class UserServiceImpl implements UserService {
                 param.getName(), param.getBalance(), user.getUid());
         financeAccountRepository.save(account);
     }
+
+    @Override
+    public void deleteAccount(String email, int id) {
+        User user = userRepository.findByEmail(email);
+        financeAccountRepository.deleteByUidAndOwnerId(id, user.getUid());
+    }
 }

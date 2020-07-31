@@ -62,4 +62,10 @@ public interface UserService {
      * 添加财产账户
      */
     void addFinanceAccount(String email, AddFinanceAccountParam param);
+
+    /**
+     * 删除财产账户
+     * 根据用户id和账户id一起删除，防止利用接口删除其他账户
+     */
+    void deleteAccount(String email, int id);
 }

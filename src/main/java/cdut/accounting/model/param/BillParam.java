@@ -18,11 +18,11 @@ public class BillParam {
      */
     private double money;
     /**
-     * 支出分类
+     * 关联账户id
      */
-    private String moneyType;
+    private int accountId;
     /**
-     * 支出方式（支付宝，微信...）
+     * 收入还是支出(income,expense)
      */
     private String type;
     /**

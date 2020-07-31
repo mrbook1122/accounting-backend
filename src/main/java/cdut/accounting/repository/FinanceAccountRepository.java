@@ -23,4 +23,6 @@ public interface FinanceAccountRepository extends CrudRepository<FinanceAccount,
     void deleteByUidAndOwnerId(int uid, int ownerId);
 
     List<FinanceAccount> findAllByOwnerId(int id);
+
+    FinanceAccount findByUid(int id);
 }

@@ -15,7 +15,6 @@ import java.util.Date;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Document
 public class Tally {
     @Id
@@ -29,10 +28,6 @@ public class Tally {
      * 账单类型（expense-支出，income收入）
      */
     private String type;
-    /**
-     * 账单分类（购物、餐饮...）
-     */
-    private TallyCategory tallyCategory;
     /**
      * 账单分类（标签）
      */
@@ -57,16 +52,19 @@ public class Tally {
      * 用户名
      */
     private String username;
+    /**
+     * 账单关联的账户id，如果为0则表示未关联账户
+     */
+    private int accountId;
+    /**
+     * (支付宝、微信...)
+     */
+    private String accountType;
+    private String accountName;
 
-    public Tally(Date date, String type, TallyCategory tallyCategory, double money) {
-        this.date = date;
-        this.type = type;
-        this.tallyCategory = tallyCategory;
-        this.money = money;
-    }
-
-    public Tally(Date date, String type, String label, double money, String remarks, boolean reism,
-                 boolean reismStatus, String username) {
+    public Tally(int uid, Date date, String type, String label, double money, String remarks, boolean reism,
+                 boolean reismStatus, String username, int accountId, String accountType, String accountName) {
+        this.uid = uid;
         this.date = date;
         this.type = type;
         this.label = label;
@@ -75,5 +73,8 @@ public class Tally {
         this.reism = reism;
         this.reismStatus = reismStatus;
         this.username = username;
+        this.accountId = accountId;
+        this.accountType = accountType;
+        this.accountName = accountName;
     }
 }

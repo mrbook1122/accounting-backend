@@ -1,12 +1,17 @@
 package cdut.accounting.service.impl;
 
+import cdut.accounting.exception.FinanceAccountNotExistsException;
 import cdut.accounting.model.document.BillDocument;
 import cdut.accounting.model.dto.UserBillAnalysisDTO;
 import cdut.accounting.model.dto.UserBillDTO;
+import cdut.accounting.model.entity.FinanceAccount;
 import cdut.accounting.model.entity.Tally;
 import cdut.accounting.model.param.BillParam;
+import cdut.accounting.repository.FinanceAccountRepository;
 import cdut.accounting.repository.TallyRepository;
+import cdut.accounting.repository.UserRepository;
 import cdut.accounting.service.TallyService;
+import cdut.accounting.utils.IDUtils;
 import cdut.accounting.utils.JwtUtils;
 import cdut.accounting.utils.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +31,14 @@ import java.util.List;
 public class TallyServiceImpl implements TallyService {
     @Autowired
     private MongoTemplate mongoTemplate;
-
     @Autowired
     private TallyRepository tallyRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private FinanceAccountRepository financeAccountRepository;
+    @Autowired
+    private IDUtils idUtils;
 
     @Override
     public UserBillAnalysisDTO getUserBill(String date) {
@@ -75,11 +85,28 @@ public class TallyServiceImpl implements TallyService {
 
     @Override
     public void saveUserBill(BillParam billParam) {
+        // 1.查询关联账户是否存在
+        FinanceAccount account = null;
+        if (billParam.getAccountId() != 0) {
+            account = financeAccountRepository.findByUid(billParam.getAccountId());
+            if (account == null) {
+                throw new FinanceAccountNotExistsException();
+            }
+        }
+        // 2.存入账单
         String username = JwtUtils.getUsername();
-//        TallyCategory tallyCategory = new TallyCategory();
-        Tally tally = new Tally(new Date(), billParam.getType(), billParam.getLabel(), billParam.getMoney(),
-                billParam.getRemarks(), billParam.isReism(), false, username);
+        int id = idUtils.generateID();
+        String accountType = account == null ? null : account.getType();
+        String accountName = account == null ? null : account.getName();
+        Tally tally = new Tally(id, new Date(), billParam.getType(), billParam.getLabel(), billParam.getMoney(),
+                billParam.getRemarks(), billParam.isReism(), false, username, billParam.getAccountId(),
+                accountType, accountName);
         tallyRepository.save(tally);
+        // 3.如果有关联账户则扣减账户余额
+        if (account != null) {
+            account.setBalance(account.getBalance() - billParam.getMoney());
+            financeAccountRepository.save(account);
+        }
     }
 
     @Override

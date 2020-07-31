@@ -1,8 +1,8 @@
 package cdut.accounting.service;
 
-import cdut.accounting.model.dto.CommonResult;
 import cdut.accounting.model.dto.JoinApplyDTO;
 import cdut.accounting.model.dto.UserInfoDTO;
+import cdut.accounting.model.param.AddFinanceAccountParam;
 import cdut.accounting.model.param.LoginParam;
 import cdut.accounting.model.param.RegisterParam;
 
@@ -57,4 +57,9 @@ public interface UserService {
      * 获取用户的审核列表
      */
     List<JoinApplyDTO> auditList(String email);
+
+    /**
+     * 添加财产账户
+     */
+    void addFinanceAccount(String email, AddFinanceAccountParam param);
 }

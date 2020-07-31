@@ -1,6 +1,7 @@
 package cdut.accounting.component;
 
 import cdut.accounting.exception.DateFormatException;
+import cdut.accounting.exception.FinanceAccountExistsException;
 import cdut.accounting.exception.UserExistsException;
 import cdut.accounting.model.dto.CommonResult;
 import org.springframework.http.ResponseEntity;
@@ -23,5 +24,10 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(UserExistsException.class)
     public CommonResult userExists() {
         return new CommonResult(false, "邮箱已注册");
+    }
+
+    @ExceptionHandler(FinanceAccountExistsException.class)
+    public CommonResult financeAccountExists() {
+        return new CommonResult(false, "账户已存在");
     }
 }

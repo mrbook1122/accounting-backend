@@ -1,13 +1,17 @@
 package cdut.accounting.service.impl;
 
+import cdut.accounting.exception.FinanceAccountExistsException;
 import cdut.accounting.exception.UserExistsException;
 import cdut.accounting.model.dto.JoinApplyDTO;
 import cdut.accounting.model.dto.UserInfoDTO;
+import cdut.accounting.model.entity.FinanceAccount;
 import cdut.accounting.model.entity.JoinApply;
 import cdut.accounting.model.entity.Team;
 import cdut.accounting.model.entity.User;
+import cdut.accounting.model.param.AddFinanceAccountParam;
 import cdut.accounting.model.param.LoginParam;
 import cdut.accounting.model.param.RegisterParam;
+import cdut.accounting.repository.FinanceAccountRepository;
 import cdut.accounting.repository.JoinApplyRepository;
 import cdut.accounting.repository.TeamRepository;
 import cdut.accounting.repository.UserRepository;
@@ -47,6 +51,8 @@ public class UserServiceImpl implements UserService {
     private MongoTemplate mongoTemplate;
     @Autowired
     private TeamRepository teamRepository;
+    @Autowired
+    private FinanceAccountRepository financeAccountRepository;
 
     @Override
     public void register(RegisterParam param) {
@@ -142,5 +148,20 @@ public class UserServiceImpl implements UserService {
             result.add(new JoinApplyDTO(j.getUid(), j.getUsername(), j.getTeamName(), j.getDate()));
         }
         return result;
+    }
+
+    @Override
+    public void addFinanceAccount(String email, AddFinanceAccountParam param) {
+        User user = userRepository.findByEmail(email);
+        // 1.先查询是否存在相同的账户
+        if (financeAccountRepository
+                .findByTypeAndNameAndOwnerId(param.getType(), param.getName(), user.getUid()) != null) {
+            throw new FinanceAccountExistsException();
+        }
+
+        int id = idUtils.generateID();
+        FinanceAccount account = new FinanceAccount(id, param.getType(),
+                param.getName(), param.getBalance(), user.getUid());
+        financeAccountRepository.save(account);
     }
 }

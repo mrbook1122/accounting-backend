@@ -124,8 +124,18 @@ public class UserController {
      * 用户待审核列表
      */
     @GetMapping("/user/audit/list")
-    public List<JoinApplyDTO>  auditList() {
+    public List<JoinApplyDTO> auditList() {
         String email = JwtUtils.getUserEmail();
         return userService.auditList(email);
+    }
+
+    /**
+     * 添加财产账户
+     */
+    @PostMapping("/user/finance/account")
+    public CommonResult addFinanceAccount(@RequestBody @Valid AddFinanceAccountParam param) {
+        String email = JwtUtils.getUserEmail();
+        userService.addFinanceAccount(email, param);
+        return CommonResult.success();
     }
 }

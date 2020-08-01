@@ -20,6 +20,11 @@ public class DateUtils {
         }
     }
 
+    /**
+     * 将字符串日期转化为日期对象
+     *
+     * @param date 只包含年月(如2020-07)
+     */
     public static Date convertByMonth(String date) {
         // TODO 正则
         Calendar time = Calendar.getInstance();

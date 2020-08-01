@@ -2,6 +2,7 @@ package cdut.accounting.service.impl;
 
 import cdut.accounting.exception.FinanceAccountNotExistsException;
 import cdut.accounting.model.document.BillDocument;
+import cdut.accounting.model.dto.RefundDTO;
 import cdut.accounting.model.dto.UserBillAnalysisDTO;
 import cdut.accounting.model.dto.UserBillDTO;
 import cdut.accounting.model.dto.UserBillWithAccountDTO;
@@ -9,6 +10,7 @@ import cdut.accounting.model.entity.FinanceAccount;
 import cdut.accounting.model.entity.Tally;
 import cdut.accounting.model.entity.User;
 import cdut.accounting.model.param.BillParam;
+import cdut.accounting.model.param.RefundBillParam;
 import cdut.accounting.repository.FinanceAccountRepository;
 import cdut.accounting.repository.TallyRepository;
 import cdut.accounting.repository.UserRepository;
@@ -149,5 +151,51 @@ public class TallyServiceImpl implements TallyService {
         }
         sb.append(']');
         return sb.toString();
+    }
+
+    @Override
+    public List<RefundDTO> getNonRefundList(String email, Date date) {
+        User user = userRepository.findByEmail(email);
+        Date[] dates = DateUtils.getPeriodByMonth(date);
+        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdAndReismAndReismStatus(dates[0], dates[1],
+                user.getUid(), true, false);
+        List<RefundDTO> result = new ArrayList<>();
+        for (Tally t : tallies) {
+            result.add(new RefundDTO(t.getUid(), t.getAccountType(), t.getAccountName(), t.getMoney(), t.getRemarks()
+                    , t.getLabel()));
+        }
+        return result;
+    }
+
+    @Override
+    public List<RefundDTO> getRefundList(String email, Date date) {
+        User user = userRepository.findByEmail(email);
+        Date[] dates = DateUtils.getPeriodByMonth(date);
+        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdAndReismAndReismStatus(dates[0], dates[1],
+                user.getUid(), true, true);
+        List<RefundDTO> result = new ArrayList<>();
+        for (Tally t : tallies) {
+            result.add(new RefundDTO(t.getUid(), t.getAccountType(), t.getAccountName(), t.getMoney(), t.getRemarks()
+                    , t.getLabel()));
+        }
+        return result;
+    }
+
+    @Override
+    public void refundBill(RefundBillParam param) {
+        List<Tally> tallies = tallyRepository.findAllByUid(param.getBillIdList());
+        // 报销总金额
+        double amount = 0;
+        for (Tally t : tallies) {
+            t.setReismStatus(true);
+            amount += t.getMoney();
+            tallyRepository.save(t);
+        }
+        // 如果有关联账户，则报销到账户中
+        if (param.getAccountId() != 0) {
+            FinanceAccount account = financeAccountRepository.findByUid(param.getAccountId());
+            account.setBalance(account.getBalance() + amount);
+            financeAccountRepository.save(account);
+        }
     }
 }

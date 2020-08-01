@@ -1,8 +1,10 @@
 package cdut.accounting.service;
 
+import cdut.accounting.model.dto.RefundDTO;
 import cdut.accounting.model.dto.UserBillAnalysisDTO;
 import cdut.accounting.model.dto.UserBillDTO;
 import cdut.accounting.model.param.BillParam;
+import cdut.accounting.model.param.RefundBillParam;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -27,4 +29,11 @@ public interface TallyService {
      * 获取用户账单列表
      */
     String getUserBillList(String username, Date date);
+
+    List<RefundDTO> getNonRefundList(String email, Date date);
+
+    List<RefundDTO> getRefundList(String email, Date date);
+
+    @Transactional
+    void refundBill(RefundBillParam param);
 }

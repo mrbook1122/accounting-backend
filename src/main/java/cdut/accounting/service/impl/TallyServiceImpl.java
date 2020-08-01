@@ -4,16 +4,22 @@ import cdut.accounting.exception.FinanceAccountNotExistsException;
 import cdut.accounting.model.document.BillDocument;
 import cdut.accounting.model.dto.UserBillAnalysisDTO;
 import cdut.accounting.model.dto.UserBillDTO;
+import cdut.accounting.model.dto.UserBillWithAccountDTO;
 import cdut.accounting.model.entity.FinanceAccount;
 import cdut.accounting.model.entity.Tally;
+import cdut.accounting.model.entity.User;
 import cdut.accounting.model.param.BillParam;
 import cdut.accounting.repository.FinanceAccountRepository;
 import cdut.accounting.repository.TallyRepository;
 import cdut.accounting.repository.UserRepository;
 import cdut.accounting.service.TallyService;
+import cdut.accounting.utils.DateUtils;
 import cdut.accounting.utils.IDUtils;
 import cdut.accounting.utils.JwtUtils;
 import cdut.accounting.utils.NumberUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -39,6 +45,8 @@ public class TallyServiceImpl implements TallyService {
     private FinanceAccountRepository financeAccountRepository;
     @Autowired
     private IDUtils idUtils;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Override
     public UserBillAnalysisDTO getUserBill(String date) {
@@ -94,12 +102,14 @@ public class TallyServiceImpl implements TallyService {
             }
         }
         // 2.存入账单
-        String username = JwtUtils.getUsername();
+        String email = JwtUtils.getUserEmail();
+        User user = userRepository.findByEmail(email);
         int id = idUtils.generateID();
         String accountType = account == null ? null : account.getType();
         String accountName = account == null ? null : account.getName();
         Tally tally = new Tally(id, new Date(), billParam.getType(), billParam.getLabel(), billParam.getMoney(),
-                billParam.getRemarks(), billParam.isReism(), false, username, billParam.getAccountId(),
+                billParam.getRemarks(), billParam.isReism(), false, user.getUsername(),
+                user.getUid(), billParam.getAccountId(),
                 accountType, accountName);
         tallyRepository.save(tally);
         // 3.如果有关联账户则扣减账户余额
@@ -110,20 +120,34 @@ public class TallyServiceImpl implements TallyService {
     }
 
     @Override
-    public List<UserBillDTO> getUserBillList(String username) {
-        Date d1, d2;
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        d1 = c.getTime();
-        c.add(Calendar.DATE, 1);
-        d2 = c.getTime();
-        List<Tally> tallies = tallyRepository.findByDateBetweenAndUsername(d1, d2, username);
-        List<UserBillDTO> list = new ArrayList<>();
-        for (Tally t : tallies) {
-            list.add(new UserBillDTO().convertFrom(t));
+    public String getUserBillList(String email, Date date) {
+        Date[] dates = DateUtils.getPeriodByDay(date);
+        User user = userRepository.findByEmail(email);
+        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserId(dates[0], dates[1], user.getUid());
+        StringBuilder sb = new StringBuilder("[");
+        int num;
+        Tally t;
+        try {
+            for (int i = 0; i < (num = tallies.size()); i++) {
+                if ((t = tallies.get(i)).getAccountId() != 0) {
+                    UserBillWithAccountDTO dto = new UserBillWithAccountDTO();
+                    BeanUtils.copyProperties(t, dto);
+                    dto.setId(t.getUid());
+                    sb.append(objectMapper.writeValueAsString(dto));
+                } else {
+                    UserBillDTO dto = new UserBillDTO();
+                    BeanUtils.copyProperties(t, dto);
+                    dto.setId(t.getUid());
+                    sb.append(objectMapper.writeValueAsString(dto));
+                }
+                if (i < num - 1) {
+                    sb.append(',');
+                }
+            }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
-        return list;
+        sb.append(']');
+        return sb.toString();
     }
 }

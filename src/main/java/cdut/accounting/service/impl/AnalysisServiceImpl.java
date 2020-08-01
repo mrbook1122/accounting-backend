@@ -5,8 +5,10 @@ import cdut.accounting.model.dto.PieChartDTO;
 import cdut.accounting.model.dto.PieChartItem;
 import cdut.accounting.model.entity.Tally;
 import cdut.accounting.model.entity.TeamBill;
+import cdut.accounting.model.entity.User;
 import cdut.accounting.repository.TallyRepository;
 import cdut.accounting.repository.TeamBillRepository;
+import cdut.accounting.repository.UserRepository;
 import cdut.accounting.service.AnalysisService;
 import cdut.accounting.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +21,12 @@ import java.util.*;
 public class AnalysisServiceImpl implements AnalysisService {
     @Autowired
     private MongoTemplate mongoTemplate;
-
     @Autowired
     private TallyRepository tallyRepository;
     @Autowired
     private TeamBillRepository teamBillRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public HistogramDTO getUserHistogram(Date date, String username) {
@@ -35,7 +38,8 @@ public class AnalysisServiceImpl implements AnalysisService {
         int numberOfDays = c.getActualMaximum(Calendar.DATE);
         c.add(Calendar.MONTH, 1);
         d2 = c.getTime();
-        List<Tally> tallies = tallyRepository.findByDateBetweenAndUsername(d1, d2, username);
+        User user = userRepository.findByEmail(username);
+        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserId(d1, d2, user.getUid());
         HistogramDTO result = new HistogramDTO();
         int[] income = new int[numberOfDays];
         int[] expenses = new int[numberOfDays];
@@ -64,7 +68,8 @@ public class AnalysisServiceImpl implements AnalysisService {
         d1 = c.getTime();
         c.add(Calendar.MONTH, 1);
         d2 = c.getTime();
-        List<Tally> tallies = tallyRepository.findByDateBetweenAndUsername(d1, d2, username);
+        User user = userRepository.findByEmail(username);
+        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserId(d1, d2, user.getUid());
         HashMap<String, Double> expenseMap = new HashMap<>();
         HashMap<String, Double> incomeMap = new HashMap<>();
         double expenseAmount = 0;

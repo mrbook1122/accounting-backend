@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface TallyRepository extends PagingAndSortingRepository<Tally, String> {
-    List<Tally> findByDateBetweenAndUsername(Date start, Date end, String username);
+    List<Tally> findByDateBetweenAndUserId(Date start, Date end, int userId);
 }

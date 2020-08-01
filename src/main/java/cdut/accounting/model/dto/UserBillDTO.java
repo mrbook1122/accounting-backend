@@ -1,20 +1,29 @@
 package cdut.accounting.model.dto;
 
-import cdut.accounting.model.dto.base.OutputConverter;
-import cdut.accounting.model.entity.Tally;
-import cdut.accounting.model.param.BillParam;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.springframework.beans.BeanUtils;
 
-@EqualsAndHashCode(callSuper = true)
+import java.util.Date;
+
 @Data
-public class UserBillDTO extends BillParam implements OutputConverter<UserBillDTO, Tally> {
-    private String id;
+public class UserBillDTO {
+    private int id;
+    private String type;
+    private boolean reism;
+    private String label;
+    private double money;
+    private Date date;
+    private String remarks;
 
-    @Override
-    public UserBillDTO convertFrom(Tally tally) {
-        BeanUtils.copyProperties(tally, this);
-        return this;
+    public UserBillDTO() {
+    }
+
+    public UserBillDTO(int id, String type, boolean reism, String label, double money, Date date, String remarks) {
+        this.id = id;
+        this.type = type;
+        this.reism = reism;
+        this.label = label;
+        this.money = money;
+        this.date = date;
+        this.remarks = remarks;
     }
 }

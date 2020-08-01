@@ -10,4 +10,4 @@ spring:
     date-format: yyyy-MM-dd HH:mm
 
 server:
-  port: 8088
+  port: 8089

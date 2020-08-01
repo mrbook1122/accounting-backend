@@ -1,8 +1,5 @@
 package cdut.accounting.model.entity;
 
-import cdut.accounting.model.dto.UserBillDTO;
-import cdut.accounting.model.dto.base.OutputConverter;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -52,6 +49,7 @@ public class Tally {
      * 用户名
      */
     private String username;
+    private int userId;
     /**
      * 账单关联的账户id，如果为0则表示未关联账户
      */
@@ -63,7 +61,7 @@ public class Tally {
     private String accountName;
 
     public Tally(int uid, Date date, String type, String label, double money, String remarks, boolean reism,
-                 boolean reismStatus, String username, int accountId, String accountType, String accountName) {
+                 boolean reismStatus, String username, int userId, int accountId, String accountType, String accountName) {
         this.uid = uid;
         this.date = date;
         this.type = type;
@@ -73,6 +71,7 @@ public class Tally {
         this.reism = reism;
         this.reismStatus = reismStatus;
         this.username = username;
+        this.userId = userId;
         this.accountId = accountId;
         this.accountType = accountType;
         this.accountName = accountName;

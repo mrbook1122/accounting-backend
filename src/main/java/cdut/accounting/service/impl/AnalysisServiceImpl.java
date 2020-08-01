@@ -93,17 +93,8 @@ public class AnalysisServiceImpl implements AnalysisService {
                 }
             }
         }
-        List<PieChartItem> expenses = new ArrayList<>();
-        List<PieChartItem> income = new ArrayList<>();
-        for (Map.Entry<String, Double> entry : expenseMap.entrySet()) {
-            expenses.add(new PieChartItem(entry.getKey(), formatDouble(entry.getValue() / expenseAmount)));
-        }
-        for (Map.Entry<String, Double> entry : incomeMap.entrySet()) {
-            income.add(new PieChartItem(entry.getKey(), formatDouble(entry.getValue() / incomeAmount)));
-        }
         PieChartDTO result = new PieChartDTO();
-        result.setExpenses(expenses);
-        result.setIncome(income);
+        calculatePercent(result, expenseMap, incomeMap, expenseAmount, incomeAmount);
         return result;
     }
 
@@ -143,9 +134,47 @@ public class AnalysisServiceImpl implements AnalysisService {
         // 用户id到用户名的映射集合
         HashMap<Integer, String> idToName = new HashMap<>();
         for (TeamBill bill : teamBills) {
-
+            for (int userId : bill.getRelatedPeople()) {
+                if (idToName.containsKey(userId)) {
+                    String username = idToName.get(userId);
+                    if (bill.getType().equals("expense")) {
+                        expenseMap.put(username, expenseMap.get(username) + bill.getMoney());
+                        expenseAmount += bill.getMoney();
+                    } else {
+                        incomeMap.put(username, incomeMap.get(username) + bill.getMoney());
+                        incomeAmount += bill.getMoney();
+                    }
+                } else {
+                    User user = userRepository.findByUid(userId);
+                    idToName.put(userId, user.getUsername());
+                    String username = user.getUsername();
+                    if (bill.getType().equals("expense")) {
+                        expenseMap.put(username, bill.getMoney());
+                        expenseAmount += bill.getMoney();
+                    } else {
+                        incomeMap.put(username, bill.getMoney());
+                        incomeAmount += bill.getMoney();
+                    }
+                }
+            }
         }
-        return null;
+        PieChartDTO result = new PieChartDTO();
+        calculatePercent(result, expenseMap, incomeMap, expenseAmount, incomeAmount);
+        return result;
+    }
+
+    private void calculatePercent(PieChartDTO result, HashMap<String, Double> expenseMap,
+                                  HashMap<String, Double> incomeMap, double expenseAmount, double incomeAmount) {
+        List<PieChartItem> expenses = new ArrayList<>();
+        List<PieChartItem> income = new ArrayList<>();
+        for (Map.Entry<String, Double> entry : expenseMap.entrySet()) {
+            expenses.add(new PieChartItem(entry.getKey(), formatDouble(entry.getValue() / expenseAmount)));
+        }
+        for (Map.Entry<String, Double> entry : incomeMap.entrySet()) {
+            income.add(new PieChartItem(entry.getKey(), formatDouble(entry.getValue() / incomeAmount)));
+        }
+        result.setExpenses(expenses);
+        result.setIncome(income);
     }
 
     /**

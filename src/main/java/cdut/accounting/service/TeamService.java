@@ -60,4 +60,14 @@ public interface TeamService {
      * 返回最左前缀匹配id的团队列表
      */
     List<TeamSearchDTO> searchTeam(int id);
+
+    /**
+     * 提升团队成员权限
+     */
+    void upgradeMember(int teamId, int userId);
+
+    /**
+     * 降低团队成员权限
+     */
+    void degradeMember(int teamId, int userId);
 }

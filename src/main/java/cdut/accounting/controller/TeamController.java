@@ -96,4 +96,22 @@ public class TeamController {
     public List<TeamSearchDTO> searchTeam(@PathVariable int id) {
         return teamService.searchTeam(id);
     }
+
+    /**
+     * 提升成员权限
+     */
+    @PatchMapping("/team/{teamId}/member/{userId}/upgrade")
+    public CommonResult upgradeMember(@PathVariable int teamId, @PathVariable int userId) {
+        teamService.upgradeMember(teamId, userId);
+        return CommonResult.success();
+    }
+
+    /**
+     * 降低成员权限
+     */
+    @PatchMapping("/team/{teamId}/member/{userId}/downgrade")
+    public CommonResult downgradeMember(@PathVariable int teamId, @PathVariable int userId) {
+        teamService.degradeMember(teamId, userId);
+        return CommonResult.success();
+    }
 }

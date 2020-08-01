@@ -177,4 +177,34 @@ public class TeamServiceImpl implements TeamService {
         }
         return result;
     }
+
+    @Override
+    public void upgradeMember(int teamId, int userId) {
+        Team team = teamRepository.findByUid(teamId);
+        if (team != null) {
+            List<Member> members = team.getMembers();
+            for (Member m : members) {
+                if (m.getUserId() == userId) {
+                    m.setRole("管理员");
+                    break;
+                }
+            }
+            teamRepository.save(team);
+        }
+    }
+
+    @Override
+    public void degradeMember(int teamId, int userId) {
+        Team team = teamRepository.findByUid(teamId);
+        if (team != null) {
+            List<Member> members = team.getMembers();
+            for (Member m : members) {
+                if (m.getUserId() == userId) {
+                    m.setRole("成员");
+                    break;
+                }
+            }
+            teamRepository.save(team);
+        }
+    }
 }

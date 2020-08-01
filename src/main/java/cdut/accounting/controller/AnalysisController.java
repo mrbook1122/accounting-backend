@@ -3,6 +3,7 @@ package cdut.accounting.controller;
 import cdut.accounting.model.dto.HistogramDTO;
 import cdut.accounting.model.dto.PieChartDTO;
 import cdut.accounting.service.AnalysisService;
+import cdut.accounting.utils.DateUtils;
 import cdut.accounting.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,22 +22,31 @@ public class AnalysisController {
      * 用户月收柱状图数据
      */
     @GetMapping("/user/analysis/chart")
-    public HistogramDTO getUserHistogram(Date date) {
+    public HistogramDTO getUserHistogram(String date) {
         String username = JwtUtils.getUsername();
-        return analysisService.getUserHistogram(date, username);
+        Date time = DateUtils.convertByMonth(date);
+        return analysisService.getUserHistogram(time, username);
     }
 
     @GetMapping("/user/analysis/chart/category")
-    public PieChartDTO getUserPieChart(Date date) {
+    public PieChartDTO getUserPieChart(String date) {
+        Date time = DateUtils.convertByMonth(date);
         String username = JwtUtils.getUsername();
-        return analysisService.getUserPieChart(date, username);
+        return analysisService.getUserPieChart(time, username);
     }
 
     /**
      * 团队月收柱状图数据
      */
     @GetMapping("/team/{id}/analysis/chart")
-    public HistogramDTO getTeamHistogram(Date date, @PathVariable int id) {
-        return analysisService.getTeamHistogram(date, id);
+    public HistogramDTO getTeamHistogram(String date, @PathVariable int id) {
+        Date time = DateUtils.convertByMonth(date);
+        return analysisService.getTeamHistogram(time, id);
+    }
+
+    @GetMapping("/team/{id}/analysis/chart/category")
+    public PieChartDTO getTeamPieChart(String date, @PathVariable int id) {
+        Date time = DateUtils.convertByMonth(date);
+        return analysisService.getTeamPieChart(time, id);
     }
 }

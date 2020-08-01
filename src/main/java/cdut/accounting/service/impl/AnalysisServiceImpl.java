@@ -140,6 +140,11 @@ public class AnalysisServiceImpl implements AnalysisService {
         HashMap<String, Double> incomeMap = new HashMap<>();
         double expenseAmount = 0;
         double incomeAmount = 0;
+        // 用户id到用户名的映射集合
+        HashMap<Integer, String> idToName = new HashMap<>();
+        for (TeamBill bill : teamBills) {
+
+        }
         return null;
     }
 

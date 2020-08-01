@@ -20,6 +20,32 @@ public class DateUtils {
         }
     }
 
+    public static Date convertByMonth(String date) {
+        // TODO 正则
+        Calendar time = Calendar.getInstance();
+        try {
+            int year = Integer.parseInt(date.substring(0, 4));
+            int month = Integer.parseInt(date.substring(5, 7));
+            time.set(year, month - 1, 0, 0, 0, 0);
+        } catch (Exception e) {
+            throw new DateFormatException();
+        }
+        return time.getTime();
+    }
+
+    public static Date convertByDay(String date) {
+        Calendar time = Calendar.getInstance();
+        try {
+            int year = Integer.parseInt(date.substring(0, 4));
+            int month = Integer.parseInt(date.substring(5, 7));
+            int day = Integer.parseInt(date.substring(8, 10));
+            time.set(year, month - 1, day, 0, 0, 0);
+        } catch (Exception e) {
+            throw new DateFormatException();
+        }
+        return time.getTime();
+    }
+
     /**
      * 获取一个月的开头和结尾时间
      *

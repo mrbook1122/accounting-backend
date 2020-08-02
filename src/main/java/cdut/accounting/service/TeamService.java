@@ -24,8 +24,6 @@ public interface TeamService {
 
     /**
      * 保存团队账单
-     *
-     * @param committer 提交账单的人
      */
     void saveTeamBill(TeamBillParam param, int userId);
 

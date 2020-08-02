@@ -26,10 +26,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class TeamServiceImpl implements TeamService {
@@ -84,6 +81,21 @@ public class TeamServiceImpl implements TeamService {
         User user = userRepository.findByUid(userId);
         int id = idUtils.generateID();
         double money = Double.parseDouble(param.getMoney());
+        // 判断当前用户是否再数组中
+        boolean userInArray = false;
+        int[] sourceArray;
+        int sourceLength;
+        for (int i : (sourceArray = param.getRelatedPeople())) {
+            if (i == userId) {
+                userInArray = true;
+                break;
+            }
+        }
+        if (!userInArray) {
+            int[] newArray = Arrays.copyOf(sourceArray, (sourceLength = sourceArray.length) + 1);
+            newArray[sourceLength] = userId;
+            param.setRelatedPeople(newArray);
+        }
         TeamBill bill = new TeamBill(id, param.getTeamId(), money, param.getType(), new Date(),
                 param.getRemarks(), param.getRelatedPeople(), user.getUsername());
         // TODO BeanUtils复制字符串到数字问题

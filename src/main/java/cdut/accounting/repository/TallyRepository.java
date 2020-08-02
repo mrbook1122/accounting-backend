@@ -15,4 +15,6 @@ public interface TallyRepository extends PagingAndSortingRepository<Tally, Strin
                                                                  boolean reismStatus);
 
     List<Tally> findAllByUid(List<Integer> ids);
+
+    Tally findByUid(int id);
 }

@@ -128,7 +128,7 @@ public class UserServiceImpl implements UserService {
         // 判断用户是否已经在团队中
         for (Member m : team.getMembers()) {
             if (m.getUserId() == user.getUid()) {
-                throw new JoinTeamException("你已加入此团队");
+                throw new JoinTeamException("你已加入此团队，不能重复加入");
             }
         }
         JoinApply apply = new

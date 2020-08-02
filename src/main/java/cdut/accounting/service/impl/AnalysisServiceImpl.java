@@ -131,7 +131,7 @@ public class AnalysisServiceImpl implements AnalysisService {
             for (int userId : bill.getRelatedPeople()) {
                 if (idToName.containsKey(userId)) {
                     String username = idToName.get(userId);
-                    if (bill.getType().equals("expense")) {
+                    if (bill.getType().equals("expenses")) {
                         expenseMap.put(username, expenseMap.get(username) + bill.getMoney());
                         expenseAmount += bill.getMoney();
                     } else {
@@ -143,7 +143,7 @@ public class AnalysisServiceImpl implements AnalysisService {
                     if (user != null) {
                         idToName.put(userId, user.getUsername());
                         String username = user.getUsername();
-                        if (bill.getType().equals("expense")) {
+                        if (bill.getType().equals("expenses")) {
                             expenseMap.put(username, bill.getMoney());
                             expenseAmount += bill.getMoney();
                         } else {

@@ -175,10 +175,10 @@ public class TallyServiceImpl implements TallyService {
 
     @Override
     public void refundBill(RefundBillParam param) {
-        List<Tally> tallies = tallyRepository.findAllByUid(param.getBillIdList());
         // 报销总金额
         double amount = 0;
-        for (Tally t : tallies) {
+        for (int i : param.getBillIdList()) {
+            Tally t = tallyRepository.findByUid(i);
             t.setReismStatus(true);
             amount += t.getMoney();
             tallyRepository.save(t);

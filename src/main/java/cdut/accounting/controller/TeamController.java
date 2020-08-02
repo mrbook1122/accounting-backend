@@ -4,6 +4,7 @@ import cdut.accounting.model.dto.*;
 import cdut.accounting.model.param.AddTeamParam;
 import cdut.accounting.model.param.TeamBillParam;
 import cdut.accounting.service.TeamService;
+import cdut.accounting.utils.DateUtils;
 import cdut.accounting.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -59,16 +60,18 @@ public class TeamController {
      * 获取团队账单列表
      */
     @GetMapping("/team/{id}/bill/list")
-    public List<TeamBillDTO> getTeamBillList(@PathVariable int id, Date date) {
-        return teamService.getTeamBillList(id, date);
+    public List<TeamBillDTO> getTeamBillList(@PathVariable int id, String date) {
+        Date time = DateUtils.convertByDay(date);
+        return teamService.getTeamBillList(id, time);
     }
 
     /**
      * 获取团队账单分析数据
      */
     @GetMapping("/team/{id}/bill")
-    public TeamBillAnalysisDTO getTeamBillAnalysis(@PathVariable int id, Date date) {
-        return teamService.getTeamBillAnalysis(id, date);
+    public TeamBillAnalysisDTO getTeamBillAnalysis(@PathVariable int id, String date) {
+        Date time = DateUtils.convertByDay(date);
+        return teamService.getTeamBillAnalysis(id, time);
     }
 
     /**

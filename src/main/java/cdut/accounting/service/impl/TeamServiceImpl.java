@@ -99,7 +99,7 @@ public class TeamServiceImpl implements TeamService {
         d1 = calendar.getTime();
         calendar.add(Calendar.DATE, 1);
         d2 = calendar.getTime();
-        List<TeamBill> teamBills = teamBillRepository.findByTeamIdAndDateBetween(teamId, d1, d2);
+        List<TeamBill> teamBills = teamBillRepository.findByTeamIdAndDateBetweenOrderByDateDesc(teamId, d1, d2);
         List<TeamBillDTO> results = new ArrayList<>();
         for (TeamBill bill : teamBills) {
             results.add(new TeamBillDTO(bill.getCommitter(), bill.getType(), bill.getMoney(), bill.getRemarks(),

@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface TeamBillRepository extends CrudRepository<TeamBill, String> {
-    List<TeamBill> findByTeamIdAndDateBetween(int teamId, Date start, Date end);
+    List<TeamBill> findByTeamIdAndDateBetweenOrderByDateDesc(int teamId, Date start, Date end);
 }

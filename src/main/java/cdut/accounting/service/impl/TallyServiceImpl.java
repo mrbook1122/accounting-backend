@@ -121,7 +121,7 @@ public class TallyServiceImpl implements TallyService {
     public String getUserBillList(String email, Date date) {
         Date[] dates = DateUtils.getPeriodByDay(date);
         User user = userRepository.findByEmail(email);
-        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdOrderByDate(dates[0], dates[1], user.getUid());
+        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdOrderByDateDesc(dates[0], dates[1], user.getUid());
         StringBuilder sb = new StringBuilder("[");
         int num;
         Tally t;

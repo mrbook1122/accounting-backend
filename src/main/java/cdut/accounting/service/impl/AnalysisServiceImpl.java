@@ -36,7 +36,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         int numberOfDays = calendar.getActualMaximum(Calendar.DATE);
 
         User user = userRepository.findByEmail(email);
-        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdOrderByDate(dates[0], dates[1], user.getUid());
+        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdOrderByDateDesc(dates[0], dates[1], user.getUid());
         HistogramDTO result = new HistogramDTO();
         int[] income = new int[numberOfDays];
         int[] expenses = new int[numberOfDays];
@@ -65,7 +65,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         c.add(Calendar.MONTH, 1);
         d2 = c.getTime();
         User user = userRepository.findByEmail(username);
-        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdOrderByDate(d1, d2, user.getUid());
+        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdOrderByDateDesc(d1, d2, user.getUid());
         HashMap<String, Double> expenseMap = new HashMap<>();
         HashMap<String, Double> incomeMap = new HashMap<>();
         double expenseAmount = 0;
@@ -101,7 +101,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         calendar.setTime(dates[0]);
         int numberOfDays = calendar.getActualMaximum(Calendar.DATE);
 
-        List<TeamBill> teamBills = teamBillRepository.findByTeamIdAndDateBetween(teamId, dates[0], dates[1]);
+        List<TeamBill> teamBills = teamBillRepository.findByTeamIdAndDateBetweenOrderByDateDesc(teamId, dates[0], dates[1]);
         int[] income = new int[numberOfDays];
         int[] expenses = new int[numberOfDays];
         for (TeamBill t : teamBills) {
@@ -122,7 +122,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Override
     public PieChartDTO getTeamPieChart(Date date, int teamId) {
         Date[] dates = DateUtils.getPeriodByMonth(date);
-        List<TeamBill> teamBills = teamBillRepository.findByTeamIdAndDateBetween(teamId, dates[0], dates[1]);
+        List<TeamBill> teamBills = teamBillRepository.findByTeamIdAndDateBetweenOrderByDateDesc(teamId, dates[0], dates[1]);
         HashMap<String, Double> expenseMap = new HashMap<>();
         HashMap<String, Double> incomeMap = new HashMap<>();
         double expenseAmount = 0;

@@ -25,8 +25,9 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                          AuthenticationException e) throws IOException, ServletException {
         logger.info("login error: {}", e.getMessage());
-        CommonResult result = new CommonResult(false, e.getMessage());
-        httpServletResponse.setContentType("application/json; charset=utf-8");
-        httpServletResponse.getWriter().write(objectMapper.writeValueAsString(result));
+//        CommonResult result = new CommonResult(false, e.getMessage());
+//        httpServletResponse.setContentType("application/json; charset=utf-8");
+//        httpServletResponse.getWriter().write(objectMapper.writeValueAsString(result));
+        httpServletResponse.sendError(403, "登录已过期");
     }
 }

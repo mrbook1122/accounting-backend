@@ -72,9 +72,7 @@ public class UserController {
     @PatchMapping("/user/username")
     public CommonResult updateUsername(@RequestBody UpdateUsernameParam param) {
         int userId = JwtUtils.getUserId();
-        User user = userRepository.findByUid(userId);
-        String email = user.getEmail();
-        userService.updateUsername(email, param.getToName());
+        userService.updateUsername(userId, param.getToName());
         return new CommonResult(true, "更新成功");
     }
 

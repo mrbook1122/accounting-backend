@@ -37,7 +37,8 @@ public interface UserService {
      * @param email   被更新用户的邮箱
      * @param newName 新的用户名
      */
-    void updateUsername(String email, String newName);
+    @Transactional
+    void updateUsername(int userId, String newName);
 
     void updateEmail(String email, String newEmail);
 

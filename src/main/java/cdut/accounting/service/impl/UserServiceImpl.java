@@ -88,10 +88,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUsername(String email, String newName) {
-        User user = userRepository.findByEmail(email);
+    public void updateUsername(int userId, String newName) {
+        User user = userRepository.findByUid(userId);
+        // 1.修改用户名
         user.setUsername(newName);
         userRepository.save(user);
+        // 2.修改团队列表中的用户名
+//        mongoTemplate.updateMulti(Query.query(new Criteria()),
+//                new Update().set("members.username", newName).filterArray(Criteria.where("userId").is(user.getUid()))
+//                , Team.class);
     }
 
     @Override

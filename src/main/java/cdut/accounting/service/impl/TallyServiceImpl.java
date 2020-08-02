@@ -107,10 +107,10 @@ public class TallyServiceImpl implements TallyService {
         tallyRepository.save(tally);
         // 3.如果有关联账户则更改账户余额
         if (account != null) {
-            if (tally.getType().equals("expense")) {
-                account.setBalance(account.getBalance() - money);
-            } else {
+            if (tally.getType().equals("income")) {
                 account.setBalance(account.getBalance() + money);
+            } else {
+                account.setBalance(account.getBalance() - money);
             }
             financeAccountRepository.save(account);
         }

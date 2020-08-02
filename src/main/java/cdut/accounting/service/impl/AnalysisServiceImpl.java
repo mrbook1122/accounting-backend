@@ -29,14 +29,13 @@ public class AnalysisServiceImpl implements AnalysisService {
     private UserRepository userRepository;
 
     @Override
-    public HistogramDTO getUserHistogram(Date date, String email) {
+    public HistogramDTO getUserHistogram(Date date, int userId) {
         Date[] dates = DateUtils.getPeriodByMonth(date);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(dates[0]);
         int numberOfDays = calendar.getActualMaximum(Calendar.DATE);
 
-        User user = userRepository.findByEmail(email);
-        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdOrderByDateDesc(dates[0], dates[1], user.getUid());
+        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdOrderByDateDesc(dates[0], dates[1], userId);
         HistogramDTO result = new HistogramDTO();
         int[] income = new int[numberOfDays];
         int[] expenses = new int[numberOfDays];
@@ -56,7 +55,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     }
 
     @Override
-    public PieChartDTO getUserPieChart(Date date, String username) {
+    public PieChartDTO getUserPieChart(Date date, int userId) {
         Date d1, d2;
         Calendar c = Calendar.getInstance();
         c.setTime(date);
@@ -64,8 +63,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         d1 = c.getTime();
         c.add(Calendar.MONTH, 1);
         d2 = c.getTime();
-        User user = userRepository.findByEmail(username);
-        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdOrderByDateDesc(d1, d2, user.getUid());
+        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdOrderByDateDesc(d1, d2, userId);
         HashMap<String, Double> expenseMap = new HashMap<>();
         HashMap<String, Double> incomeMap = new HashMap<>();
         double expenseAmount = 0;
@@ -110,7 +108,7 @@ public class AnalysisServiceImpl implements AnalysisService {
             if (t.getType().equals("income")) {
                 income[day - 1] += t.getMoney();
             } else {
-                expenses[day - 1] -= t.getMoney();
+                expenses[day - 1] += t.getMoney();
             }
         }
         HistogramDTO result = new HistogramDTO();
@@ -142,14 +140,16 @@ public class AnalysisServiceImpl implements AnalysisService {
                     }
                 } else {
                     User user = userRepository.findByUid(userId);
-                    idToName.put(userId, user.getUsername());
-                    String username = user.getUsername();
-                    if (bill.getType().equals("expense")) {
-                        expenseMap.put(username, bill.getMoney());
-                        expenseAmount += bill.getMoney();
-                    } else {
-                        incomeMap.put(username, bill.getMoney());
-                        incomeAmount += bill.getMoney();
+                    if (user != null) {
+                        idToName.put(userId, user.getUsername());
+                        String username = user.getUsername();
+                        if (bill.getType().equals("expense")) {
+                            expenseMap.put(username, bill.getMoney());
+                            expenseAmount += bill.getMoney();
+                        } else {
+                            incomeMap.put(username, bill.getMoney());
+                            incomeAmount += bill.getMoney();
+                        }
                     }
                 }
             }

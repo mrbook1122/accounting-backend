@@ -11,7 +11,7 @@ import java.util.Date;
 @Data
 @Document
 public class JoinApply {
-    private int id;
+    private String id;
     private int uid;
     private int userId;
     private String username;

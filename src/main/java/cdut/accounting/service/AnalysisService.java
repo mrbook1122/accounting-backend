@@ -9,12 +9,12 @@ public interface AnalysisService {
     /**
      * 获取用户月收支柱状图统计数据
      */
-    HistogramDTO getUserHistogram(Date date, String username);
+    HistogramDTO getUserHistogram(Date date, int userId);
 
     /**
      * 获取用户月收支饼状图统计数据
      */
-    PieChartDTO getUserPieChart(Date date, String username);
+    PieChartDTO getUserPieChart(Date date, int userId);
 
     /**
      * 获取团队月收支柱状图统计数据

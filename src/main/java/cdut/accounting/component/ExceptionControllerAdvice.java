@@ -1,9 +1,6 @@
 package cdut.accounting.component;
 
-import cdut.accounting.exception.DateFormatException;
-import cdut.accounting.exception.FinanceAccountExistsException;
-import cdut.accounting.exception.FinanceAccountNotExistsException;
-import cdut.accounting.exception.UserExistsException;
+import cdut.accounting.exception.*;
 import cdut.accounting.model.dto.CommonResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,5 +32,10 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(FinanceAccountNotExistsException.class)
     public CommonResult financeAccountNotExists() {
         return new CommonResult(false, "关联账户不存在");
+    }
+
+    @ExceptionHandler
+    public CommonResult joinTeamException(JoinTeamException ex) {
+        return new CommonResult(false, ex.getMessage());
     }
 }

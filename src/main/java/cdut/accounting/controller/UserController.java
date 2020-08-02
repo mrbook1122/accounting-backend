@@ -1,7 +1,9 @@
 package cdut.accounting.controller;
 
 import cdut.accounting.model.dto.*;
+import cdut.accounting.model.entity.User;
 import cdut.accounting.model.param.*;
+import cdut.accounting.repository.UserRepository;
 import cdut.accounting.service.UserService;
 import cdut.accounting.utils.JwtUtils;
 import cdut.accounting.utils.RSAUtils;
@@ -9,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -22,6 +25,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * 请求公钥
@@ -56,7 +61,9 @@ public class UserController {
      */
     @GetMapping("/user/info")
     public UserInfoDTO getUserInfo() {
-        String email = JwtUtils.getUserEmail();
+        int userId = JwtUtils.getUserId();
+        User user = userRepository.findByUid(userId);
+        String email = user.getEmail();
         return userService.getUserInfo(email);
     }
 
@@ -65,7 +72,9 @@ public class UserController {
      */
     @PatchMapping("/user/username")
     public CommonResult updateUsername(@RequestBody UpdateUsernameParam param) {
-        String email = JwtUtils.getUserEmail();
+        int userId = JwtUtils.getUserId();
+        User user = userRepository.findByUid(userId);
+        String email = user.getEmail();
         userService.updateUsername(email, param.getToName());
         return new CommonResult(true, "更新成功");
     }
@@ -75,7 +84,9 @@ public class UserController {
      */
     @PatchMapping("/user/email")
     public CommonResult updateEmail(@RequestBody UpdateEmailParam param) {
-        String email = JwtUtils.getUserEmail();
+        int userId = JwtUtils.getUserId();
+        User user = userRepository.findByUid(userId);
+        String email = user.getEmail();
         userService.updateEmail(email, param.getToEmail());
         return new CommonResult(true, "更新成功");
     }
@@ -85,7 +96,9 @@ public class UserController {
      */
     @PatchMapping("/user/signature")
     public CommonResult updateSignature(@RequestBody UpdateSignatureParam param) {
-        String email = JwtUtils.getUserEmail();
+        int userId = JwtUtils.getUserId();
+        User user = userRepository.findByUid(userId);
+        String email = user.getEmail();
         userService.updateSignature(email, param.getToSignature());
         return new CommonResult(true, "更新成功");
     }
@@ -95,7 +108,9 @@ public class UserController {
      */
     @PatchMapping("/user/password")
     public CommonResult updatePassword(@RequestBody UpdatePasswordParam param) {
-        String email = JwtUtils.getUserEmail();
+        int userId = JwtUtils.getUserId();
+        User user = userRepository.findByUid(userId);
+        String email = user.getEmail();
         userService.updatePassword(email, param.getToPassword());
         return new CommonResult(true, "更新成功");
     }
@@ -105,8 +120,10 @@ public class UserController {
      */
     @PutMapping("/user/team/{teamId}")
     public CommonResult joinTeam(@PathVariable int teamId) {
-        String username = JwtUtils.getUsername();
-        userService.joinTeam(username, teamId);
+        int userId = JwtUtils.getUserId();
+        User user = userRepository.findByUid(userId);
+        String email = user.getEmail();
+        userService.joinTeam(email, teamId);
         return CommonResult.success();
     }
 
@@ -115,7 +132,9 @@ public class UserController {
      */
     @DeleteMapping("/user/team/{teamId}")
     public CommonResult exitTeam(@PathVariable int teamId) {
-        String email = JwtUtils.getUserEmail();
+        int userId = JwtUtils.getUserId();
+        User user = userRepository.findByUid(userId);
+        String email = user.getEmail();
         userService.exitTeam(email, teamId);
         return CommonResult.success();
     }
@@ -125,7 +144,9 @@ public class UserController {
      */
     @GetMapping("/user/audit/list")
     public List<JoinApplyDTO> auditList() {
-        String email = JwtUtils.getUserEmail();
+        int userId = JwtUtils.getUserId();
+        User user = userRepository.findByUid(userId);
+        String email = user.getEmail();
         return userService.auditList(email);
     }
 
@@ -134,7 +155,9 @@ public class UserController {
      */
     @GetMapping("/user/finance/account/list")
     public List<FinanceAccountDTO> getFinanceAccountList() {
-        String email = JwtUtils.getUserEmail();
+        int userId = JwtUtils.getUserId();
+        User user = userRepository.findByUid(userId);
+        String email = user.getEmail();
         return userService.getFinanceAccountList(email);
     }
 
@@ -143,7 +166,9 @@ public class UserController {
      */
     @PostMapping("/user/finance/account")
     public CommonResult addFinanceAccount(@RequestBody @Valid AddFinanceAccountParam param) {
-        String email = JwtUtils.getUserEmail();
+        int userId = JwtUtils.getUserId();
+        User user = userRepository.findByUid(userId);
+        String email = user.getEmail();
         userService.addFinanceAccount(email, param);
         return CommonResult.success();
     }
@@ -153,7 +178,9 @@ public class UserController {
      */
     @DeleteMapping("/user/finance/account/{id}")
     public CommonResult deleteFinanceAccount(@PathVariable int id) {
-        String email = JwtUtils.getUserEmail();
+        int userId = JwtUtils.getUserId();
+        User user = userRepository.findByUid(userId);
+        String email = user.getEmail();
         userService.deleteAccount(email, id);
         return CommonResult.success();
     }
@@ -173,7 +200,9 @@ public class UserController {
 
     @PatchMapping("/user/audit/{id}/reject")
     public CommonResult rejectJoin(@PathVariable int id) {
-        String email = JwtUtils.getUserEmail();
+        int userId = JwtUtils.getUserId();
+        User user = userRepository.findByUid(userId);
+        String email = user.getEmail();
         userService.rejectJoin(email, id);
         return CommonResult.success();
     }

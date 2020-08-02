@@ -28,11 +28,11 @@ public interface TallyService {
     /**
      * 获取用户账单列表
      */
-    String getUserBillList(String username, Date date);
+    String getUserBillList(int userId, Date date);
 
-    List<RefundDTO> getNonRefundList(String email, Date date);
+    List<RefundDTO> getNonRefundList(int userId, Date date);
 
-    List<RefundDTO> getRefundList(String email, Date date);
+    List<RefundDTO> getRefundList(int userId, Date date);
 
     @Transactional
     void refundBill(RefundBillParam param);

@@ -105,6 +105,8 @@ public class DateUtils {
     public static Date[] getPeriodByDay(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
+        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.MINUTE, 0);
         Date start = calendar.getTime();
         calendar.add(Calendar.DATE, 1);
         Date end = calendar.getTime();

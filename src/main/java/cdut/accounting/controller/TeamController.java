@@ -22,8 +22,8 @@ public class TeamController {
      */
     @GetMapping("/user/team/list")
     public List<TeamDTO> getTeamList() {
-        String username = JwtUtils.getUsername();
-        return teamService.getTeamList(username);
+        int userId = JwtUtils.getUserId();
+        return teamService.getTeamList(userId);
     }
 
     /**
@@ -41,8 +41,8 @@ public class TeamController {
      */
     @PostMapping("/team")
     public CommonResult addTeam(@RequestBody AddTeamParam param) {
-        String username = JwtUtils.getUsername();
-        teamService.addTeam(username, param.getName());
+        int userId = JwtUtils.getUserId();
+        teamService.addTeam(userId, param.getName());
         return new CommonResult(true, "操作成功");
     }
 
@@ -51,8 +51,8 @@ public class TeamController {
      */
     @PostMapping("/team/bill")
     public CommonResult postTeamBill(@RequestBody TeamBillParam param) {
-        String username = JwtUtils.getUsername();
-        teamService.saveTeamBill(param, username);
+        int userId = JwtUtils.getUserId();
+        teamService.saveTeamBill(param, userId);
         return new CommonResult(true, "操作成功");
     }
 

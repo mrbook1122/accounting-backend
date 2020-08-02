@@ -58,11 +58,10 @@ public class TallyServiceImpl implements TallyService {
         Date[] dates = DateUtils.convert(date);
 
 
-        String email = JwtUtils.getUserEmail();
-        User user = userRepository.findByEmail(email);
+        int userId = JwtUtils.getUserId();
         AggregationOperation o1 =
                 Aggregation.match(Criteria.where("reism").is(false)
-                        .and("userId").is(user.getUid())
+                        .and("userId").is(userId)
                         .and("date").gte(dates[0]).lt(dates[1]));
         AggregationOperation o2 = Aggregation.group("type").sum("money").as("money");
         Aggregation aggregation = Aggregation.newAggregation(o1, o2);
@@ -95,8 +94,8 @@ public class TallyServiceImpl implements TallyService {
             }
         }
         // 2.存入账单
-        String email = JwtUtils.getUserEmail();
-        User user = userRepository.findByEmail(email);
+        int userId = JwtUtils.getUserId();
+        User user = userRepository.findByUid(userId);
         int id = idUtils.generateID();
         String accountType = account == null ? null : account.getType();
         String accountName = account == null ? null : account.getName();
@@ -118,10 +117,9 @@ public class TallyServiceImpl implements TallyService {
     }
 
     @Override
-    public String getUserBillList(String email, Date date) {
+    public String getUserBillList(int userId, Date date) {
         Date[] dates = DateUtils.getPeriodByDay(date);
-        User user = userRepository.findByEmail(email);
-        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdOrderByDateDesc(dates[0], dates[1], user.getUid());
+        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdOrderByDateDesc(dates[0], dates[1], userId);
         StringBuilder sb = new StringBuilder("[");
         int num;
         Tally t;
@@ -150,11 +148,10 @@ public class TallyServiceImpl implements TallyService {
     }
 
     @Override
-    public List<RefundDTO> getNonRefundList(String email, Date date) {
-        User user = userRepository.findByEmail(email);
+    public List<RefundDTO> getNonRefundList(int userId, Date date) {
         Date[] dates = DateUtils.getPeriodByMonth(date);
         List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdAndReismAndReismStatus(dates[0], dates[1],
-                user.getUid(), true, false);
+                userId, true, false);
         List<RefundDTO> result = new ArrayList<>();
         for (Tally t : tallies) {
             result.add(new RefundDTO(t.getUid(), t.getAccountType(), t.getAccountName(), t.getMoney(), t.getRemarks()
@@ -164,11 +161,10 @@ public class TallyServiceImpl implements TallyService {
     }
 
     @Override
-    public List<RefundDTO> getRefundList(String email, Date date) {
-        User user = userRepository.findByEmail(email);
+    public List<RefundDTO> getRefundList(int userId, Date date) {
         Date[] dates = DateUtils.getPeriodByMonth(date);
         List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdAndReismAndReismStatus(dates[0], dates[1],
-                user.getUid(), true, true);
+                userId, true, true);
         List<RefundDTO> result = new ArrayList<>();
         for (Tally t : tallies) {
             result.add(new RefundDTO(t.getUid(), t.getAccountType(), t.getAccountName(), t.getMoney(), t.getRemarks()

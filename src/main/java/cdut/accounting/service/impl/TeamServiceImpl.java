@@ -11,6 +11,7 @@ import cdut.accounting.repository.TeamBillRepository;
 import cdut.accounting.repository.TeamRepository;
 import cdut.accounting.repository.UserRepository;
 import cdut.accounting.service.TeamService;
+import cdut.accounting.utils.DateUtils;
 import cdut.accounting.utils.IDUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,9 +47,8 @@ public class TeamServiceImpl implements TeamService {
     private UserRepository userRepository;
 
     @Override
-    public List<TeamDTO> getTeamList(String email) {
-        User user = userRepository.findByEmail(email);
-        List<Team> teams = mongoTemplate.find(Query.query(Criteria.where("members.userId").is(user.getUid())), Team.class);
+    public List<TeamDTO> getTeamList(int userId) {
+        List<Team> teams = mongoTemplate.find(Query.query(Criteria.where("members.userId").is(userId)), Team.class);
         List<TeamDTO> result = new ArrayList<>();
         for (Team t : teams) {
             TeamDTO teamDTO = new TeamDTO();
@@ -58,7 +58,7 @@ public class TeamServiceImpl implements TeamService {
             teamDTO.setDate(t.getDate());
             String role = "创建者";
             for (Member m : t.getMembers()) {
-                if (m.getUserId() == user.getUid()) {
+                if (m.getUserId() == userId) {
                     role = m.getRole();
                 }
             }
@@ -73,19 +73,18 @@ public class TeamServiceImpl implements TeamService {
         Team team = teamRepository.findByUid(teamId);
         List<MemberDTO> results = new ArrayList<>();
         for (Member m : team.getMembers()) {
-            MemberDTO dto = new MemberDTO();
-            BeanUtils.copyProperties(m, dto);
+            MemberDTO dto = new MemberDTO(m.getUserId(), m.getUsername(), m.getRole());
             results.add(dto);
         }
         return results;
     }
 
     @Override
-    public void saveTeamBill(TeamBillParam param, String email) {
-        User user = userRepository.findByEmail(email);
+    public void saveTeamBill(TeamBillParam param, int userId) {
+        User user = userRepository.findByUid(userId);
         int id = idUtils.generateID();
         double money = Double.parseDouble(param.getMoney());
-        TeamBill bill = new TeamBill(id, param.getTeamId(), money, param.getType(), param.getDate(),
+        TeamBill bill = new TeamBill(id, param.getTeamId(), money, param.getType(), new Date(),
                 param.getRemarks(), param.getRelatedPeople(), user.getUsername());
         // TODO BeanUtils复制字符串到数字问题
         teamBillRepository.save(bill);
@@ -93,13 +92,9 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<TeamBillDTO> getTeamBillList(int teamId, Date date) {
-        Date d1, d2;
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        d1 = calendar.getTime();
-        calendar.add(Calendar.DATE, 1);
-        d2 = calendar.getTime();
-        List<TeamBill> teamBills = teamBillRepository.findByTeamIdAndDateBetweenOrderByDateDesc(teamId, d1, d2);
+        Date[] dates = DateUtils.getPeriodByDay(date);
+        List<TeamBill> teamBills = teamBillRepository.findByTeamIdAndDateBetweenOrderByDateDesc(teamId, dates[0],
+                dates[1]);
         List<TeamBillDTO> results = new ArrayList<>();
         for (TeamBill bill : teamBills) {
             results.add(new TeamBillDTO(bill.getCommitter(), bill.getType(), bill.getMoney(), bill.getRemarks(),
@@ -110,15 +105,10 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public TeamBillAnalysisDTO getTeamBillAnalysis(int teamId, Date date) {
-        Date d1, d2;
-        Calendar time = Calendar.getInstance();
-        time.setTime(date);
-        d1 = time.getTime();
-        time.add(Calendar.DATE, 1);
-        d2 = time.getTime();
+        Date[] dates = DateUtils.getPeriodByDay(date);
 
         AggregationOperation o1 =
-                Aggregation.match(Criteria.where("teamId").is(teamId).and("date").gte(d1).lt(d2));
+                Aggregation.match(Criteria.where("teamId").is(teamId).and("date").gte(dates[0]).lt(dates[1]));
         AggregationOperation o2 = Aggregation.group("type").sum("money").as("money");
         Aggregation aggregation = Aggregation.newAggregation(o1, o2);
         AggregationResults<BillDocument> results = mongoTemplate
@@ -128,7 +118,7 @@ public class TeamServiceImpl implements TeamService {
         TeamBillAnalysisDTO bill = new TeamBillAnalysisDTO();
         for (BillDocument d : documents) {
             switch (d.getId()) {
-                case "expense":
+                case "expenses":
                     bill.setExpense(d.getMoney());
                     break;
                 case "income":
@@ -151,8 +141,8 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public void addTeam(String owner, String teamName) {
-        User user = userRepository.findByEmail(owner);
+    public void addTeam(int userId, String teamName) {
+        User user = userRepository.findByUid(userId);
         Team team = new Team();
         Member member = new Member(user.getUid(), user.getUsername(), "创建者");
         List<Member> members = new ArrayList<>();
@@ -161,7 +151,7 @@ public class TeamServiceImpl implements TeamService {
         team.setName(teamName);
         team.setDate(Calendar.getInstance().getTime());
         team.setOwnerId(user.getUid());
-        team.setOwner(owner);
+        team.setOwner(user.getUsername());
         team.setMembers(members);
         teamRepository.save(team);
     }

@@ -10,4 +10,13 @@ public class MemberDTO {
     private int uid;
     private String username;
     private String role;
+
+    public MemberDTO() {
+    }
+
+    public MemberDTO(int uid, String username, String role) {
+        this.uid = uid;
+        this.username = username;
+        this.role = role;
+    }
 }

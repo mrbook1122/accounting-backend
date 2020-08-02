@@ -23,16 +23,16 @@ public class AnalysisController {
      */
     @GetMapping("/user/analysis/chart")
     public HistogramDTO getUserHistogram(String date) {
-        String username = JwtUtils.getUsername();
+        int userId = JwtUtils.getUserId();
         Date time = DateUtils.convertByMonth(date);
-        return analysisService.getUserHistogram(time, username);
+        return analysisService.getUserHistogram(time, userId);
     }
 
     @GetMapping("/user/analysis/chart/category")
     public PieChartDTO getUserPieChart(String date) {
         Date time = DateUtils.convertByMonth(date);
-        String username = JwtUtils.getUsername();
-        return analysisService.getUserPieChart(time, username);
+        int userId = JwtUtils.getUserId();
+        return analysisService.getUserPieChart(time, userId);
     }
 
     /**

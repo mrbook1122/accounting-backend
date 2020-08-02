@@ -1,6 +1,7 @@
 package cdut.accounting.service.impl;
 
 import cdut.accounting.exception.FinanceAccountExistsException;
+import cdut.accounting.exception.JoinTeamException;
 import cdut.accounting.exception.UserExistsException;
 import cdut.accounting.model.dto.FinanceAccountDTO;
 import cdut.accounting.model.dto.JoinApplyDTO;
@@ -73,7 +74,8 @@ public class UserServiceImpl implements UserService {
         UsernamePasswordAuthenticationToken token = new
                 UsernamePasswordAuthenticationToken(param.getEmail(), password);
         Authentication authentication = authenticationManager.authenticate(token);
-        return JwtUtils.generateToken(authentication.getName());
+        User user = userRepository.findByEmail(param.getEmail());
+        return JwtUtils.generateToken(authentication.getName(), user.getUid());
     }
 
     @Override
@@ -123,6 +125,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email);
         int id = idUtils.generateID();
         Team team = teamRepository.findByUid(teamId);
+        // 判断用户是否已经在团队中
+        for (Member m : team.getMembers()) {
+            if (m.getUserId() == user.getUid()) {
+                throw new JoinTeamException("你已加入此团队");
+            }
+        }
         JoinApply apply = new
                 JoinApply(id, user.getUid(), user.getUsername(), teamId, team.getName(),
                 Calendar.getInstance().getTime(),

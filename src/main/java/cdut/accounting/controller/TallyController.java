@@ -56,8 +56,8 @@ public class TallyController {
     public void getUserBillList(@RequestParam String date, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
         Date time = DateUtils.convertByDay(date);
-        String email = JwtUtils.getUserEmail();
-        String result = tallyService.getUserBillList(email, time);
+        int userId = JwtUtils.getUserId();
+        String result = tallyService.getUserBillList(userId, time);
         response.getWriter().write(result);
     }
 
@@ -66,9 +66,9 @@ public class TallyController {
      */
     @GetMapping("/user/bill/non-refund/list")
     public List<RefundDTO> getNonRefundList(String date) {
-        String email = JwtUtils.getUserEmail();
+        int userId = JwtUtils.getUserId();
         Date time = DateUtils.convertByMonth(date);
-        return tallyService.getNonRefundList(email, time);
+        return tallyService.getNonRefundList(userId, time);
     }
 
     /**
@@ -76,9 +76,9 @@ public class TallyController {
      */
     @GetMapping("/user/bill/refunded/list")
     public List<RefundDTO> getRefundList(String date) {
-        String email = JwtUtils.getUserEmail();
+        int userId = JwtUtils.getUserId();
         Date time = DateUtils.convertByMonth(date);
-        return tallyService.getRefundList(email, time);
+        return tallyService.getRefundList(userId, time);
     }
 
     /**

@@ -25,9 +25,10 @@ public class JwtUtils {
     /**
      * 生成token
      */
-    public static String generateToken(String name) {
+    public static String generateToken(String name, int userId) {
         return Jwts.builder().setSubject(name)
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 3600 * 24))
+                .claim("userId", userId)
                 .signWith(key).compact();
     }
 
@@ -43,11 +44,11 @@ public class JwtUtils {
         Date exp = claims.getExpiration();
         Date now = new Date();
         if (exp.getTime() - now.getTime() < 1000 * 60 * 10) { // 10分钟
-            String newToken = generateToken(claims.getSubject());
+            String newToken = generateToken(claims.getSubject(), claims.get("userId", Integer.class));
             response.setHeader("refreshToken", newToken);
         }
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        return new UsernamePasswordAuthenticationToken(claims.getSubject(), token, authorities);
+        return new UsernamePasswordAuthenticationToken(claims.get("userId"), token, authorities);
     }
 
     /**
@@ -61,16 +62,9 @@ public class JwtUtils {
     }
 
     /**
-     * 从SecurityContext获取当前的用户
+     * 从SecurityContext获取当前的用户id
      */
-    public static String getUsername() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
-    }
-
-    /**
-     * 从SecurityContext获取当前的用户的邮箱
-     */
-    public static String getUserEmail() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
+    public static Integer getUserId() {
+        return (Integer) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }

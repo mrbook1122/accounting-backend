@@ -13,7 +13,7 @@ public interface TeamService {
     /**
      * 获取当前用户加入的团队列表
      */
-    List<TeamDTO> getTeamList(String username);
+    List<TeamDTO> getTeamList(int userId);
 
     /**
      * 获取团队成员列表
@@ -27,7 +27,7 @@ public interface TeamService {
      *
      * @param committer 提交账单的人
      */
-    void saveTeamBill(TeamBillParam param, String committer);
+    void saveTeamBill(TeamBillParam param, int userId);
 
     /**
      * 获取团队账单列表
@@ -54,7 +54,7 @@ public interface TeamService {
     /**
      * 添加团队
      */
-    void addTeam(String owner, String teamName);
+    void addTeam(int userId, String teamName);
 
     /**
      * 返回最左前缀匹配id的团队列表

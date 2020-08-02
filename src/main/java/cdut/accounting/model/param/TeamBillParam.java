@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 public class TeamBillParam {
     private int teamId;
-    private double money;
+    private String money;
     private String type;
     private Date date;
     private String remarks;

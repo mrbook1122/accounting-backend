@@ -109,14 +109,15 @@ public class TallyServiceImpl implements TallyService {
         int id = idUtils.generateID();
         String accountType = account == null ? null : account.getType();
         String accountName = account == null ? null : account.getName();
-        Tally tally = new Tally(id, new Date(), billParam.getType(), billParam.getLabel(), billParam.getMoney(),
+        double money = Double.parseDouble(billParam.getMoney());
+        Tally tally = new Tally(id, new Date(), billParam.getType(), billParam.getLabel(), Double.parseDouble(billParam.getMoney()),
                 billParam.getRemarks(), billParam.isReism(), false, user.getUsername(),
                 user.getUid(), billParam.getAccountId(),
                 accountType, accountName);
         tallyRepository.save(tally);
         // 3.如果有关联账户则扣减账户余额
         if (account != null) {
-            account.setBalance(account.getBalance() - billParam.getMoney());
+            account.setBalance(account.getBalance() - money);
             financeAccountRepository.save(account);
         }
     }

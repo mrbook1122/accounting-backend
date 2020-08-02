@@ -54,15 +54,9 @@ public class TallyController {
     @GetMapping("/user/bill/list")
     public void getUserBillList(@RequestParam String date, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
-        Calendar time = Calendar.getInstance();
-        if (date.length() == 10) {
-            int year = Integer.parseInt(date.substring(0, 4));
-            int month = Integer.parseInt(date.substring(5, 7));
-            int day = Integer.parseInt(date.substring(8, 10));
-            time.set(year, month - 1, day, 0, 0, 0);
-        }
+        Date time = DateUtils.convertByDay(date);
         String email = JwtUtils.getUserEmail();
-        String result = tallyService.getUserBillList(email, time.getTime());
+        String result = tallyService.getUserBillList(email, time);
         response.getWriter().write(result);
     }
 

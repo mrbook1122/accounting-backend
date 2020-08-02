@@ -16,7 +16,7 @@ public class BillParam {
     /**
      * 金额
      */
-    private double money;
+    private String money;
     /**
      * 关联账户id
      */

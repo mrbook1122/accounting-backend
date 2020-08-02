@@ -22,5 +22,5 @@ public class AddFinanceAccountParam {
     /**
      * 余额
      */
-    private double balance;
+    private String balance;
 }

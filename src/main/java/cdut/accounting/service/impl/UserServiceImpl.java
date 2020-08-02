@@ -158,8 +158,9 @@ public class UserServiceImpl implements UserService {
         }
 
         int id = idUtils.generateID();
+        double money = Double.parseDouble(param.getBalance());
         FinanceAccount account = new FinanceAccount(id, param.getType(),
-                param.getName(), param.getBalance(), user.getUid());
+                param.getName(), money, user.getUid());
         financeAccountRepository.save(account);
     }
 

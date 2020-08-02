@@ -76,10 +76,13 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public void saveTeamBill(TeamBillParam param, String committer) {
-        TeamBill bill = new TeamBill();
-        BeanUtils.copyProperties(param, bill);
-        bill.setCommitter(committer);
+    public void saveTeamBill(TeamBillParam param, String email) {
+        User user = userRepository.findByEmail(email);
+        int id = idUtils.generateID();
+        double money = Double.parseDouble(param.getMoney());
+        TeamBill bill = new TeamBill(id, param.getTeamId(), money, param.getType(), param.getDate(),
+                param.getRemarks(), param.getRelatedPeople(), user.getUsername());
+        // TODO BeanUtils复制字符串到数字问题
         teamBillRepository.save(bill);
     }
 

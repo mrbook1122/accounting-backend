@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
         // 加密存储密码
         password = passwordEncoder.encode(password);
         // 生成用户id
-        int userId = idUtils.generateID();
+        int userId = idUtils.generateUserId();
         User user = new User(userId, param.getUsername(), param.getEmail(), password);
         userRepository.save(user);
     }

@@ -21,6 +21,8 @@ import cdut.accounting.utils.JwtUtils;
 import cdut.accounting.utils.NumberUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -37,6 +39,8 @@ import java.util.List;
 
 @Service
 public class TallyServiceImpl implements TallyService {
+    public static final Logger logger = LoggerFactory.getLogger(TallyServiceImpl.class);
+
     @Autowired
     private MongoTemplate mongoTemplate;
     @Autowired
@@ -69,9 +73,12 @@ public class TallyServiceImpl implements TallyService {
             d2 = time.getTime();
         }
 
+
+        String email = JwtUtils.getUserEmail();
+        User user = userRepository.findByEmail(email);
         AggregationOperation o1 =
-                Aggregation.match(new Criteria().orOperator(Criteria.where("reism").is(false),
-                        Criteria.where("reism").is(true).and("reismStatus").is(false))
+                Aggregation.match(Criteria.where("reism").is(false)
+                        .and("userId").is(user.getUid())
                         .and("date").gte(d1).lt(d2));
         AggregationOperation o2 = Aggregation.group("type").sum("money").as("money");
         Aggregation aggregation = Aggregation.newAggregation(o1, o2);
@@ -82,7 +89,7 @@ public class TallyServiceImpl implements TallyService {
         UserBillAnalysisDTO bill = new UserBillAnalysisDTO();
         for (BillDocument d : documents) {
             switch (d.getId()) {
-                case "expense":
+                case "expenses":
                     bill.setExpenses(NumberUtils.formatDouble(d.getMoney()));
                     break;
                 case "income":

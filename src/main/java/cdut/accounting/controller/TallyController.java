@@ -44,6 +44,7 @@ public class TallyController {
      */
     @PostMapping("/user/bill")
     public CommonResult postUserBill(@RequestBody BillParam billParam) {
+        logger.debug("date: {}", billParam.getDate());
         tallyService.saveUserBill(billParam);
         return new CommonResult(true, "操作成功");
     }

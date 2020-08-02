@@ -1,6 +1,8 @@
 package cdut.accounting.model.param;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -28,6 +30,7 @@ public class BillParam {
     /**
      * 时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date date;
     /**
      * 报销

@@ -1,5 +1,6 @@
 package cdut.accounting.model.param;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
@@ -12,6 +13,7 @@ public class TeamBillParam {
     private int teamId;
     private String money;
     private String type;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date date;
     private String remarks;
     /**

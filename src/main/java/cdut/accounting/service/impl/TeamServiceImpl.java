@@ -12,6 +12,8 @@ import cdut.accounting.repository.TeamRepository;
 import cdut.accounting.repository.UserRepository;
 import cdut.accounting.service.TeamService;
 import cdut.accounting.utils.IDUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -30,6 +32,8 @@ import java.util.List;
 
 @Service
 public class TeamServiceImpl implements TeamService {
+    public static final Logger logger = LoggerFactory.getLogger(TeamServiceImpl.class);
+
     @Autowired
     private TeamRepository teamRepository;
     @Autowired

@@ -29,29 +29,25 @@ public class AnalysisServiceImpl implements AnalysisService {
     private UserRepository userRepository;
 
     @Override
-    public HistogramDTO getUserHistogram(Date date, String username) {
-        Date d1, d2;
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        c.set(Calendar.DATE, 1);
-        d1 = c.getTime();
-        int numberOfDays = c.getActualMaximum(Calendar.DATE);
-        c.add(Calendar.MONTH, 1);
-        d2 = c.getTime();
-        User user = userRepository.findByEmail(username);
-        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdOrderByDate(d1, d2, user.getUid());
+    public HistogramDTO getUserHistogram(Date date, String email) {
+        Date[] dates = DateUtils.getPeriodByMonth(date);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dates[0]);
+        int numberOfDays = calendar.getActualMaximum(Calendar.DATE);
+
+        User user = userRepository.findByEmail(email);
+        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdOrderByDate(dates[0], dates[1], user.getUid());
         HistogramDTO result = new HistogramDTO();
         int[] income = new int[numberOfDays];
         int[] expenses = new int[numberOfDays];
 
-        Calendar calendar = Calendar.getInstance();
         for (Tally t : tallies) {
             calendar.setTime(t.getDate());
             int day = calendar.get(Calendar.DATE);
             if (t.getType().equals("income")) {
                 income[day - 1] += t.getMoney();
             } else {
-                expenses[day - 1] -= t.getMoney();
+                expenses[day - 1] += t.getMoney();
             }
         }
         result.setExpenses(expenses);

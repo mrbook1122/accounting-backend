@@ -8,6 +8,7 @@ spring:
 
   jackson:
     date-format: yyyy-MM-dd HH:mm
+    time-zone: Asia/Shanghai
 
 server:
   port: 8089

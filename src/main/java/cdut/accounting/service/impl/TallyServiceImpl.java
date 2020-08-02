@@ -33,7 +33,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -56,22 +55,7 @@ public class TallyServiceImpl implements TallyService {
 
     @Override
     public UserBillAnalysisDTO getUserBill(String date) {
-        Date d1, d2;
-        Calendar time = Calendar.getInstance();
-        int year = Integer.parseInt(date.substring(0, 4));
-        int month = Integer.parseInt(date.substring(5, 7));
-        if (date.length() == 10) {
-            int day = Integer.parseInt(date.substring(8, 10));
-            time.set(year, month - 1, day, 0, 0, 0);
-            d1 = time.getTime();
-            time.add(Calendar.DATE, 1);
-            d2 = time.getTime();
-        } else {
-            time.set(year, month - 1, 0, 0, 0, 0);
-            d1 = time.getTime();
-            time.add(Calendar.MONTH, 1);
-            d2 = time.getTime();
-        }
+        Date[] dates = DateUtils.convert(date);
 
 
         String email = JwtUtils.getUserEmail();
@@ -79,7 +63,7 @@ public class TallyServiceImpl implements TallyService {
         AggregationOperation o1 =
                 Aggregation.match(Criteria.where("reism").is(false)
                         .and("userId").is(user.getUid())
-                        .and("date").gte(d1).lt(d2));
+                        .and("date").gte(dates[0]).lt(dates[1]));
         AggregationOperation o2 = Aggregation.group("type").sum("money").as("money");
         Aggregation aggregation = Aggregation.newAggregation(o1, o2);
         AggregationResults<BillDocument> results = mongoTemplate
@@ -122,9 +106,13 @@ public class TallyServiceImpl implements TallyService {
                 user.getUid(), billParam.getAccountId(),
                 accountType, accountName);
         tallyRepository.save(tally);
-        // 3.如果有关联账户则扣减账户余额
+        // 3.如果有关联账户则更改账户余额
         if (account != null) {
-            account.setBalance(account.getBalance() - money);
+            if (tally.getType().equals("expense")) {
+                account.setBalance(account.getBalance() - money);
+            } else {
+                account.setBalance(account.getBalance() + money);
+            }
             financeAccountRepository.save(account);
         }
     }
@@ -133,7 +121,7 @@ public class TallyServiceImpl implements TallyService {
     public String getUserBillList(String email, Date date) {
         Date[] dates = DateUtils.getPeriodByDay(date);
         User user = userRepository.findByEmail(email);
-        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserId(dates[0], dates[1], user.getUid());
+        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdOrderByDate(dates[0], dates[1], user.getUid());
         StringBuilder sb = new StringBuilder("[");
         int num;
         Tally t;

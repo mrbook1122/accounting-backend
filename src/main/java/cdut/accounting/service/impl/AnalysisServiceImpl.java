@@ -39,7 +39,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         c.add(Calendar.MONTH, 1);
         d2 = c.getTime();
         User user = userRepository.findByEmail(username);
-        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserId(d1, d2, user.getUid());
+        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdOrderByDate(d1, d2, user.getUid());
         HistogramDTO result = new HistogramDTO();
         int[] income = new int[numberOfDays];
         int[] expenses = new int[numberOfDays];
@@ -69,7 +69,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         c.add(Calendar.MONTH, 1);
         d2 = c.getTime();
         User user = userRepository.findByEmail(username);
-        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserId(d1, d2, user.getUid());
+        List<Tally> tallies = tallyRepository.findByDateBetweenAndUserIdOrderByDate(d1, d2, user.getUid());
         HashMap<String, Double> expenseMap = new HashMap<>();
         HashMap<String, Double> incomeMap = new HashMap<>();
         double expenseAmount = 0;

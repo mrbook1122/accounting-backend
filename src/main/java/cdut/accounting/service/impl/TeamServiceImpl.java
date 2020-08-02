@@ -42,8 +42,9 @@ public class TeamServiceImpl implements TeamService {
     private UserRepository userRepository;
 
     @Override
-    public List<TeamDTO> getTeamList(String username) {
-        List<Team> teams = mongoTemplate.find(Query.query(Criteria.where("members.username").is(username)), Team.class);
+    public List<TeamDTO> getTeamList(String email) {
+        User user = userRepository.findByEmail(email);
+        List<Team> teams = mongoTemplate.find(Query.query(Criteria.where("members.userId").is(user.getUid())), Team.class);
         List<TeamDTO> result = new ArrayList<>();
         for (Team t : teams) {
             TeamDTO teamDTO = new TeamDTO();
@@ -51,9 +52,9 @@ public class TeamServiceImpl implements TeamService {
             teamDTO.setName(t.getName());
             teamDTO.setNumber(t.getMembers().size());
             teamDTO.setDate(t.getDate());
-            String role = null;
+            String role = "创建者";
             for (Member m : t.getMembers()) {
-                if (m.getUsername().equals(username)) {
+                if (m.getUserId() == user.getUid()) {
                     role = m.getRole();
                 }
             }
@@ -149,11 +150,15 @@ public class TeamServiceImpl implements TeamService {
     public void addTeam(String owner, String teamName) {
         User user = userRepository.findByEmail(owner);
         Team team = new Team();
+        Member member = new Member(user.getUid(), user.getUsername(), "创建者");
+        List<Member> members = new ArrayList<>();
+        members.add(member);
         team.setUid(idUtils.generateUserId());
         team.setName(teamName);
         team.setDate(Calendar.getInstance().getTime());
         team.setOwnerId(user.getUid());
         team.setOwner(owner);
+        team.setMembers(members);
         teamRepository.save(team);
     }
 

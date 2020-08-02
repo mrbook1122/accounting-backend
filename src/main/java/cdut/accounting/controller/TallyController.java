@@ -84,7 +84,7 @@ public class TallyController {
     /**
      * 报销账单
      */
-    @PostMapping
+    @PostMapping("/user/bill/refund")
     CommonResult refundBill(@RequestBody RefundBillParam param) {
         tallyService.refundBill(param);
         return CommonResult.success();

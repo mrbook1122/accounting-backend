@@ -70,7 +70,8 @@ public class TeamServiceImpl implements TeamService {
         Team team = teamRepository.findByUid(teamId);
         List<MemberDTO> results = new ArrayList<>();
         for (Member m : team.getMembers()) {
-            MemberDTO dto = new MemberDTO(m.getUserId(), m.getUsername(), m.getRole());
+            User user = userRepository.findByUid(m.getUserId());
+            MemberDTO dto = new MemberDTO(m.getUserId(), user.getUsername(), m.getRole());
             results.add(dto);
         }
         return results;

@@ -4,7 +4,7 @@ spring:
       path: /api
   data:
     mongodb:
-      uri: mongodb://39.108.250.251/e-store
+      uri: mongodb://mongo/account
 
   jackson:
     date-format: yyyy-MM-dd HH:mm
